@@ -7,6 +7,8 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/nspcc-dev/neo-go/pkg/smartcontract/nef"
+	"github.com/prometheus/client_golang/prometheus/promhttp"
+	"github.com/rs/cors"
 	"github.com/tidwall/gjson"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -70,6 +72,7 @@ func multipleFile(w http.ResponseWriter, r *http.Request) {
 	reader, err := r.MultipartReader()
 	pathFile:=createDateDir("./")
 	if err != nil {
+		fmt.Println("stop here")
 		http.Error(w,err.Error(),http.StatusInternalServerError)
 		return
 	}
@@ -193,6 +196,7 @@ func multipleFile(w http.ResponseWriter, r *http.Request) {
 		} else {
 			fmt.Println("=================This contract has already been verified===============")
 			msg, _ :=json.Marshal(jsonResult{6,"This contract has already been verified"})
+			w.Header().Set("Access-Control-Allow-Origin", "*")
 			w.Header().Set("Content-Type","application/json")
 			w.Write(msg)
 
@@ -353,7 +357,7 @@ func getContractState(w http.ResponseWriter,m map[string] string) (string,string
 
 	body, _ := ioutil.ReadAll(resp.Body)
 
-	//fmt.Println("response Body:", string(body))
+	fmt.Println("response Body:", string(body))
 	if gjson.Get(string(body),"error").Exists() {
 		message:=gjson.Get(string(body),"error.message").String()
 		fmt.Println("================="+message+"===============")
@@ -437,10 +441,14 @@ func getId(m map[string] string)  string{
 
 func main() {
 	fmt.Println("Server start")
-
-	http.HandleFunc("/upload",multipleFile)
-	err:= http.ListenAndServe(":8080",nil)
+	mux := http.NewServeMux()
+	mux.HandleFunc("/upload",func(writer http.ResponseWriter, request *http.Request){
+		multipleFile(writer,request)
+	})
+	mux.Handle("/metrics", promhttp.Handler())
+	handler := cors.Default().Handler(mux)
+	err := http.ListenAndServe("127.0.0.1:8080", handler)
 	if err != nil {
-		log.Fatal("ListenAndServe",err)
+		fmt.Println("listen and server error")
 	}
 }
