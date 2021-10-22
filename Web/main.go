@@ -63,7 +63,9 @@ type insertVerifiedContract struct {
 
 type insertContractSourceCode struct {
 	Hash string
-	Buffer []byte
+	Updatecounter string
+	FileName string
+	Code string
 }
 
 func multipleFile(w http.ResponseWriter, r *http.Request) {
@@ -174,7 +176,7 @@ func multipleFile(w http.ResponseWriter, r *http.Request) {
 					}
 
 
-					sourceCode := insertContractSourceCode{getContract(m1),buffer}
+					sourceCode := insertContractSourceCode{getContract(m1),getUpdateCounter(m1),fi.Name(),string(buffer)}
 					insertOneSourceCode, err := co.Database("test").Collection("ContractSouceCode").InsertOne(ctx, sourceCode)
 					if err != nil {
 						log.Fatal(err)
@@ -327,6 +329,7 @@ func execCommand(dir string,w http.ResponseWriter,m map[string] string) string{
 
 func getContractState(w http.ResponseWriter,m map[string] string) (string,string) {
 	rt := os.ExpandEnv("${RUNTIME}")
+	fmt.Println(rt)
 	var resp *http.Response
 	payload, err := json.Marshal(map[string]interface{}{
 		"jsonrpc": "2.0",
@@ -336,6 +339,9 @@ func getContractState(w http.ResponseWriter,m map[string] string) (string,string
 		},
 		"id": 1,
 	})
+	if rt !="mainnet" || rt!="testnet"{
+		rt = "mainnet"
+	}
 	switch rt {
 	case "mainnet":
 		resp, err = http.Post(RPCNODEMAIN, "application/json", bytes.NewReader(payload))
@@ -400,6 +406,9 @@ func intializeMongoOnlineClient(cfg Config, ctx context.Context) (*mongo.Client,
 	rt := os.ExpandEnv("${RUNTIME}")
 	var clientOptions *options.ClientOptions
 	var dbOnline string
+	if rt != "mainnet" || rt !="testnet"{
+		rt = "mainnet"
+	}
 	switch rt {
 	case "mainnet":
 		clientOptions = options.Client().ApplyURI("mongodb://" + cfg.Database_main.User + ":" + cfg.Database_main.Pass + "@" + cfg.Database_main.Host + ":" + cfg.Database_main.Port + "/" + cfg.Database_main.Database)
