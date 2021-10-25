@@ -22,6 +22,7 @@ import (
 	"os/exec"
 	"path"
 	"path/filepath"
+	"strconv"
 	"strings"
 	"time"
 )
@@ -57,13 +58,13 @@ type jsonResult struct {
 
 type insertVerifiedContract struct {
 	Hash string
-	Id string
-	Updatecounter string
+	Id int
+	Updatecounter int
 }
 
 type insertContractSourceCode struct {
 	Hash string
-	Updatecounter string
+	Updatecounter int
 	FileName string
 	Code string
 }
@@ -71,6 +72,7 @@ type insertContractSourceCode struct {
 func multipleFile(w http.ResponseWriter, r *http.Request) {
 
 	var m1 = make(map[string]string)
+	var m2 = make(map[string]int)
 	reader, err := r.MultipartReader()
 	pathFile:=createDateDir("./")
 	if err != nil {
@@ -122,12 +124,12 @@ func multipleFile(w http.ResponseWriter, r *http.Request) {
 		return
 
 	}
-	version,sourceNef:= getContractState(w,m1)
+	version,sourceNef:= getContractState(w,m1,m2)
 	if sourceNef == "3"||sourceNef=="4"{
 		return
 	}
 
-	version = version[20:25]
+
 	//fmt.Println(version)
 	//fmt.Println(chainNef)
 	//fmt.Println(sourceNef)
@@ -141,11 +143,11 @@ func multipleFile(w http.ResponseWriter, r *http.Request) {
 		ctx := context.TODO()
 		co,_:=intializeMongoOnlineClient(cfg, ctx)
 
-		filter:= bson.M{"hash":getContract(m1),"updatecounter":getUpdateCounter(m1)}
+		filter:= bson.M{"hash":getContract(m1),"updatecounter":getUpdateCounter(m2)}
 		result:=co.Database("test").Collection("VerifyContract").FindOne(ctx,filter)
 		//fmt.Println(result.Err())
 		if result.Err() != nil {
-			verified:= insertVerifiedContract{getContract(m1),getId(m1),getUpdateCounter(m1)}
+			verified:= insertVerifiedContract{getContract(m1),getId(m2),getUpdateCounter(m2)}
 			insertOne, err := co.Database("test").Collection("VerifyContract").InsertOne(ctx,verified)
 			if err != nil {
 				log.Fatal(err)
@@ -176,8 +178,8 @@ func multipleFile(w http.ResponseWriter, r *http.Request) {
 					}
 
 
-					sourceCode := insertContractSourceCode{getContract(m1),getUpdateCounter(m1),fi.Name(),string(buffer)}
-					insertOneSourceCode, err := co.Database("test").Collection("ContractSouceCode").InsertOne(ctx, sourceCode)
+					sourceCode := insertContractSourceCode{getContract(m1),getUpdateCounter(m2),fi.Name(),string(buffer)}
+					insertOneSourceCode, err := co.Database("test").Collection("ContractSourceCode").InsertOne(ctx, sourceCode)
 					if err != nil {
 						log.Fatal(err)
 					}
@@ -254,13 +256,13 @@ func createDateDir(basepath string) string  {
 func execCommand(dir string,w http.ResponseWriter,m map[string] string) string{
 	//cmd := exec.Command("ls")
 	cmd:=exec.Command("echo")
-	if getVersion(m)=="3.0.0"{
+	if getVersion(m)=="Neo.Compiler.CSharp 3.0.0"{
 		cmd= exec.Command("/Users/qinzilie/flamingo-contract-swap/Swap/flamingo-contract-swap/c/nccs")
 		fmt.Println("use 3.0.0 compiler")
-	} else if getVersion(m)=="3.0.2"{
+	} else if getVersion(m)=="Neo.Compiler.CSharp 3.0.2"{
 		cmd = exec.Command("/Users/qinzilie/flamingo-contract-swap/Swap/flamingo-contract-swap/b/nccs")
 		fmt.Println("use 3.0.2 compiler")
-	} else if getVersion(m)=="3.0.3" {
+	} else if getVersion(m)=="Neo.Compiler.CSharp 3.0.3" {
 		cmd = exec.Command("/Users/qinzilie/flamingo-contract-swap/Swap/flamingo-contract-swap/a/nccs")
 		fmt.Println("use 3.0.3 compiler")
 	} else {
@@ -327,7 +329,7 @@ func execCommand(dir string,w http.ResponseWriter,m map[string] string) string{
 	//	fmt.Println(res.Script)
 }
 
-func getContractState(w http.ResponseWriter,m map[string] string) (string,string) {
+func getContractState(w http.ResponseWriter,m1 map[string] string,m2 map[string] int) (string,string) {
 	rt := os.ExpandEnv("${RUNTIME}")
 	fmt.Println(rt)
 	var resp *http.Response
@@ -335,7 +337,7 @@ func getContractState(w http.ResponseWriter,m map[string] string) (string,string
 		"jsonrpc": "2.0",
 		"method": "getcontractstate",
 		"params":  []interface{}{
-			getContract(m),
+			getContract(m1),
 		},
 		"id": 1,
 	})
@@ -377,8 +379,8 @@ func getContractState(w http.ResponseWriter,m map[string] string) (string,string
 	version:=gjson.Get(string(body),"result.nef.compiler").String()
 	updateCounter := gjson.Get(string(body),"result.updatecounter").String()
 	id := gjson.Get(string(body),"result.id").String()
-	m["id"] = id
-	m["updateCounter"] = updateCounter
+	m2["id"],_ =strconv.Atoi(id)
+	m2["updateCounter"],_ = strconv.Atoi(updateCounter)
 	//fmt.Println(base64.StdEncoding.DecodeString(sourceNef))
 	fmt.Println("===============Now is ChainNode nef===============")
 	fmt.Println(nef.String())
@@ -440,11 +442,11 @@ func getVersion(m map[string] string)  string{
 	return m["Version"]
 }
 
-func getUpdateCounter(m map[string] string)  string{
+func getUpdateCounter(m map[string] int)  int{
 	return m["updateCounter"]
 }
 
-func getId(m map[string] string)  string{
+func getId(m map[string] int)  int{
 	return m["id"]
 }
 
