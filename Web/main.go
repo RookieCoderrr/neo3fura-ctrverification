@@ -27,11 +27,12 @@ import (
 	"time"
 )
 
-
+// 定义主网和测试网节点常量，之后根据部署主网测试网选择响应的结点
 const RPCNODEMAIN = "https://neofura.ngd.network:1927"
-//const RPCNODEMAIN = "https://testneofura.ngd.network:444"
+
 const RPCNODETEST = "https://testneofura.ngd.network:444"
 
+//定义主网和测试往数据库结构
 type Config struct {
 	Database_main struct {
 		Host     string `yaml:"host"`
@@ -50,18 +51,18 @@ type Config struct {
 		DBName   string `yaml:"dbname"`
 	} `yaml:"database_test"`
 }
-
+//定义http应答返回格式
 type jsonResult struct {
 	Code int
 	Msg string
 }
-
+//定义插入VerifiedContract表的数据格式, 记录被验证的合约
 type insertVerifiedContract struct {
 	Hash string
 	Id int
 	Updatecounter int
 }
-
+//定义插入ContractSourceCode表的数据格式，记录被验证的合约源代码
 type insertContractSourceCode struct {
 	Hash string
 	Updatecounter int
@@ -70,17 +71,20 @@ type insertContractSourceCode struct {
 }
 
 func multipleFile(w http.ResponseWriter, r *http.Request) {
-
+	//定义value 为string 类型的字典，用来存合约hash,合约编译器，文件名字
 	var m1 = make(map[string]string)
+	//定义value 为int 类型的字典，用来存合约更新次数，合约id
 	var m2 = make(map[string]int)
+	//声明一个http数据接收器
 	reader, err := r.MultipartReader()
+	//根据当前时间戳来创建文件夹，用来存放合约作者要上传的合约源文件
 	pathFile:=createDateDir("./")
 	if err != nil {
 		fmt.Println("stop here")
 		http.Error(w,err.Error(),http.StatusInternalServerError)
 		return
 	}
-
+	// 读取作者上传的文件以及ContractHash,CompilerVersion等数据，并保存在map中。
 	for {
 		part, err := reader.NextPart()
 		if err == io.EOF {
@@ -118,42 +122,42 @@ func multipleFile(w http.ResponseWriter, r *http.Request) {
 
 	}
 
-
+	//编译用户上传的合约源文件，并返回编译后的.nef数据
 	chainNef:=execCommand(pathFile+"/",w,m1)
+	//如果编译出错，程序不向下执行
 	if chainNef == "0"||chainNef=="1"||chainNef =="2"{
 		return
 
 	}
+	//向链上结点请求合约的状态，返回请求到的合约nef数据
 	version,sourceNef:= getContractState(w,m1,m2)
+	//如果请求失败，程序不向下执行
 	if sourceNef == "3"||sourceNef=="4"{
 		return
 	}
-
-
-	//fmt.Println(version)
-	//fmt.Println(chainNef)
-	//fmt.Println(sourceNef)
-	//fmt.Println(sourceNef==chainNef)
-
+	//比较用户上传的源代码编译的.nef文件与链上存储的合约.nef数据是否相等，如果相等的话，向数据库插入数据
 	if sourceNef==chainNef {
+		//打开数据库配置文件
 		cfg, err := OpenConfigFile()
 		if err != nil {
 			log.Fatal(" open file error")
 		}
+		//连接数据库
 		ctx := context.TODO()
 		co,_:=intializeMongoOnlineClient(cfg, ctx)
-
+		//查询当前合约是否已经存在于VerifiedContract表中，参数为合约hash，合约更新次数
 		filter:= bson.M{"hash":getContract(m1),"updatecounter":getUpdateCounter(m2)}
 		result:=co.Database("test").Collection("VerifyContract").FindOne(ctx,filter)
-		//fmt.Println(result.Err())
+		//如果合约不存在于VerifiedContract表中，验证成功
 		if result.Err() != nil {
+			//在VerifyContract表中插入该合约信息
 			verified:= insertVerifiedContract{getContract(m1),getId(m2),getUpdateCounter(m2)}
 			insertOne, err := co.Database("test").Collection("VerifyContract").InsertOne(ctx,verified)
 			if err != nil {
 				log.Fatal(err)
 			}
 			fmt.Println("Inserted a verified Contract",insertOne.InsertedID)
-
+			//在ContractSourceCode表中，插入上传的合约源代码。
 			rd, err:= ioutil.ReadDir(pathFile+"/")
 			for _, fi := range rd {
 				if fi.IsDir(){
@@ -194,9 +198,7 @@ func multipleFile(w http.ResponseWriter, r *http.Request) {
 			msg, _ :=json.Marshal(jsonResult{5,"Verify done and record verified contract in database!"})
 			w.Header().Set("Content-Type","application/json")
 			w.Write(msg)
-
-
-
+		//如果合约存在于VerifiedContract表中，说明合约已经被验证过，不会存新的数据
 		} else {
 			fmt.Println("=================This contract has already been verified===============")
 			msg, _ :=json.Marshal(jsonResult{6,"This contract has already been verified"})
@@ -207,22 +209,7 @@ func multipleFile(w http.ResponseWriter, r *http.Request) {
 
 		}
 
-
-
-
-
-
-
-		//filter:= bson.D{{"hash","0xcd10d9f697230b04d9ebb8594a1ffe18fa95d9ad"}}
-		//var result insertContractSourceCode
-		//err = co.Database("test").Collection("ContractSouceCode").FindOne(ctx,filter).Decode(&result)
-		//if err != nil {
-		//	log.Fatal(err)
-		//}
-		//fmt.Println("Result is ===========",string(result.Buffer))
-
-
-
+	////比较用户上传的源代码编译的.nef文件与链上存储的合约.nef数据是否相等，如果不等的话，返回以下内容
 	} else {
 		if version != getVersion(m1) {
 			fmt.Println("=================Please change your compiler version and try again===============")
@@ -240,7 +227,7 @@ func multipleFile(w http.ResponseWriter, r *http.Request) {
 	}
 
 }
-
+// 根据上传文件的时间戳来命名新生成的文件夹
 func createDateDir(basepath string) string  {
 	folderName := time.Now().Format("20060102150405")
 	fmt.Printf("%s", folderName)
@@ -252,9 +239,10 @@ func createDateDir(basepath string) string  {
 	return folderPath
 
 }
-
+//编译用户上传的合约源码
 func execCommand(dir string,w http.ResponseWriter,m map[string] string) string{
 	//cmd := exec.Command("ls")
+	//根据用户上传参数选择对应的编译器
 	cmd:=exec.Command("echo")
 	if getVersion(m)=="Neo.Compiler.CSharp 3.0.0"{
 		cmd= exec.Command("/Users/qinzilie/flamingo-contract-swap/Swap/flamingo-contract-swap/c/nccs")
@@ -328,7 +316,7 @@ func execCommand(dir string,w http.ResponseWriter,m map[string] string) string{
 	//	fmt.Println(res.Tokens)
 	//	fmt.Println(res.Script)
 }
-
+// 向链上结点请求合约的nef数据
 func getContractState(w http.ResponseWriter,m1 map[string] string,m2 map[string] int) (string,string) {
 	rt := os.ExpandEnv("${RUNTIME}")
 	fmt.Println(rt)
@@ -403,7 +391,7 @@ func OpenConfigFile() (Config, error) {
 	}
 	return cfg, err
 }
-
+//链接主网和测试网数据库
 func intializeMongoOnlineClient(cfg Config, ctx context.Context) (*mongo.Client, string) {
 	rt := os.ExpandEnv("${RUNTIME}")
 	var clientOptions *options.ClientOptions
@@ -449,7 +437,7 @@ func getUpdateCounter(m map[string] int)  int{
 func getId(m map[string] int)  int{
 	return m["id"]
 }
-
+//监听127.0.0.1:1926端口
 func main() {
 	fmt.Println("Server start")
 	mux := http.NewServeMux()
@@ -458,7 +446,7 @@ func main() {
 	})
 	mux.Handle("/metrics", promhttp.Handler())
 	handler := cors.Default().Handler(mux)
-	err := http.ListenAndServe("127.0.0.1:8080", handler)
+	err := http.ListenAndServe("127.0.0.1:1926", handler)
 	if err != nil {
 		fmt.Println("listen and server error")
 	}

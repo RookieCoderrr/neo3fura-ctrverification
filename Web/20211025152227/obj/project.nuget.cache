@@ -1,0 +1,10 @@
+{
+  "version": 2,
+  "dgSpecHash": "3v0JaZSMCfg02XcTJXNiFJj9aSw9SLkEaq5iTUeRcL3qpLB5PpHWgfqcp59CGOi0TRwZBzH8PjX1NRJxigLWBw==",
+  "success": true,
+  "projectFilePath": "/Users/qinzilie/neo3fura-ctrverification/neo3fura-ctrverification/Web/20211025152227/Neoverse.csproj",
+  "expectedPackageFiles": [
+    "/Users/qinzilie/.nuget/packages/neo.smartcontract.framework/3.0.2/neo.smartcontract.framework.3.0.2.nupkg.sha512"
+  ],
+  "logs": []
+}
