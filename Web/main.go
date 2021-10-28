@@ -61,6 +61,7 @@ type insertVerifiedContract struct {
 	Hash string
 	Id int
 	Updatecounter int
+
 }
 //定义插入ContractSourceCode表的数据格式，记录被验证的合约源代码
 type insertContractSourceCode struct {
@@ -123,14 +124,14 @@ func multipleFile(w http.ResponseWriter, r *http.Request) {
 	}
 
 	//编译用户上传的合约源文件，并返回编译后的.nef数据
-	chainNef:=execCommand(pathFile+"/",w,m1)
+	chainNef:=execCommand(pathFile,w,m1)
 	//如果编译出错，程序不向下执行
 	if chainNef == "0"||chainNef=="1"||chainNef =="2"{
 		return
 
 	}
 	//向链上结点请求合约的状态，返回请求到的合约nef数据
-	version,sourceNef:= getContractState(w,m1,m2)
+	version,sourceNef:= getContractState(pathFile,w,m1,m2)
 	//如果请求失败，程序不向下执行
 	if sourceNef == "3"||sourceNef=="4"{
 		return
@@ -145,20 +146,38 @@ func multipleFile(w http.ResponseWriter, r *http.Request) {
 		//连接数据库
 		ctx := context.TODO()
 		co,_:=intializeMongoOnlineClient(cfg, ctx)
+		rt := os.ExpandEnv("${RUNTIME}")
 		//查询当前合约是否已经存在于VerifiedContract表中，参数为合约hash，合约更新次数
 		filter:= bson.M{"hash":getContract(m1),"updatecounter":getUpdateCounter(m2)}
-		result:=co.Database("test").Collection("VerifyContract").FindOne(ctx,filter)
+		var result *mongo.SingleResult
+		if rt=="mainnet"{
+			result=co.Database("neofura").Collection("VerifyContractModel").FindOne(ctx,filter)
+		} else {
+			result=co.Database("testneofura").Collection("VerifyContractModel").FindOne(ctx,filter)
+		}
+
 		//如果合约不存在于VerifiedContract表中，验证成功
 		if result.Err() != nil {
 			//在VerifyContract表中插入该合约信息
 			verified:= insertVerifiedContract{getContract(m1),getId(m2),getUpdateCounter(m2)}
-			insertOne, err := co.Database("test").Collection("VerifyContract").InsertOne(ctx,verified)
+			var insertOne *mongo.InsertOneResult
+			if rt== "mainnet" {
+				insertOne, err = co.Database("neofura").Collection("VerifyContractModel").InsertOne(ctx,verified)
+				fmt.Println("Connect to mainnet database")
+			} else {
+				insertOne, err = co.Database("testneofura").Collection("VerifyContractModel").InsertOne(ctx,verified)
+				fmt.Println("connect to testnet database")
+			}
+
 			if err != nil {
 				log.Fatal(err)
 			}
-			fmt.Println("Inserted a verified Contract",insertOne.InsertedID)
+			fmt.Println("Inserted a verified Contract in verifyContractModel collection in"+rt+" database",insertOne.InsertedID)
 			//在ContractSourceCode表中，插入上传的合约源代码。
 			rd, err:= ioutil.ReadDir(pathFile+"/")
+			if err != nil {
+				fmt.Println(err)
+			}
 			for _, fi := range rd {
 				if fi.IsDir(){
 					continue
@@ -181,13 +200,18 @@ func multipleFile(w http.ResponseWriter, r *http.Request) {
 
 					}
 
-
+					var insertOneSourceCode *mongo.InsertOneResult
 					sourceCode := insertContractSourceCode{getContract(m1),getUpdateCounter(m2),fi.Name(),string(buffer)}
-					insertOneSourceCode, err := co.Database("test").Collection("ContractSourceCode").InsertOne(ctx, sourceCode)
+					if rt=="mainnet"{
+						insertOneSourceCode, err = co.Database("neofura").Collection("ContractSourceCode").InsertOne(ctx, sourceCode)
+					} else {
+						insertOneSourceCode, err = co.Database("testneofura").Collection("ContractSourceCode").InsertOne(ctx, sourceCode)
+					}
+
 					if err != nil {
 						log.Fatal(err)
 					}
-					fmt.Println("Inserted a contract source code",insertOneSourceCode.InsertedID)
+					fmt.Println("Inserted a contract source code in contractSourceCode collection in "+ rt+"database",insertOneSourceCode.InsertedID)
 
 					//fmt.Println(" registed buffer",buffer)
 					//fmt.Println("bytes read :",bytesread)
@@ -197,29 +221,34 @@ func multipleFile(w http.ResponseWriter, r *http.Request) {
 			fmt.Println("=================Insert verified contract in database===============")
 			msg, _ :=json.Marshal(jsonResult{5,"Verify done and record verified contract in database!"})
 			w.Header().Set("Content-Type","application/json")
+			os.Rename(pathFile,getContract(m1))
 			w.Write(msg)
-		//如果合约存在于VerifiedContract表中，说明合约已经被验证过，不会存新的数据
+			//如果合约存在于VerifiedContract表中，说明合约已经被验证过，不会存新的数据
 		} else {
 			fmt.Println("=================This contract has already been verified===============")
 			msg, _ :=json.Marshal(jsonResult{6,"This contract has already been verified"})
 			w.Header().Set("Access-Control-Allow-Origin", "*")
 			w.Header().Set("Content-Type","application/json")
+			os.RemoveAll(pathFile)
 			w.Write(msg)
 
 
 		}
 
-	////比较用户上传的源代码编译的.nef文件与链上存储的合约.nef数据是否相等，如果不等的话，返回以下内容
+		////比较用户上传的源代码编译的.nef文件与链上存储的合约.nef数据是否相等，如果不等的话，返回以下内容
 	} else {
+		fmt.Println(getVersion(m1))
 		if version != getVersion(m1) {
 			fmt.Println("=================Please change your compiler version and try again===============")
 			msg, _ :=json.Marshal(jsonResult{7,"Compiler version error, Compiler verison shoud be "+version})
 			w.Header().Set("Content-Type","application/json")
+			os.RemoveAll(pathFile)
 			w.Write(msg)
 		} else {
 			fmt.Println("=================Your source code doesn't match the contract on bloackchain===============")
 			msg, _ :=json.Marshal(jsonResult{8,"Contract Source Code Verification error!"})
 			w.Header().Set("Content-Type","application/json")
+			os.RemoveAll(pathFile)
 			w.Write(msg)
 		}
 
@@ -230,7 +259,7 @@ func multipleFile(w http.ResponseWriter, r *http.Request) {
 // 根据上传文件的时间戳来命名新生成的文件夹
 func createDateDir(basepath string) string  {
 	folderName := time.Now().Format("20060102150405")
-	fmt.Printf("%s", folderName)
+	fmt.Println("Create folder "+ folderName)
 	folderPath := filepath.Join(basepath, folderName)
 	if _,err := os.Stat(folderPath);os.IsNotExist(err){
 		os.Mkdir(folderPath,0777)
@@ -240,7 +269,7 @@ func createDateDir(basepath string) string  {
 
 }
 //编译用户上传的合约源码
-func execCommand(dir string,w http.ResponseWriter,m map[string] string) string{
+func execCommand(pathFile string,w http.ResponseWriter,m map[string] string) string{
 	//cmd := exec.Command("ls")
 	//根据用户上传参数选择对应的编译器
 	cmd:=exec.Command("echo")
@@ -255,13 +284,14 @@ func execCommand(dir string,w http.ResponseWriter,m map[string] string) string{
 		fmt.Println("use 3.0.3 compiler")
 	} else {
 		fmt.Println("===============Compiler version doesn't exist==============")
-		msg, _ :=json.Marshal(jsonResult{0,"Compiler version doesn't exist, please choose 3.0.0/3.0.2/3.0.3 version"})
+		msg, _ :=json.Marshal(jsonResult{0,"Compiler version doesn't exist, please choose Neo.Compiler.CSharp 3.0.0/Neo.Compiler.CSharp 3.0.2/Neo.Compiler.CSharp 3.0.3 version"})
 		w.Header().Set("Content-Type","application/json")
 		w.Write(msg)
+		os.RemoveAll(pathFile)
 		return "0"
 	}
 
-	cmd.Dir = dir
+	cmd.Dir = pathFile+"/"
 	stdout,err := cmd.StdoutPipe()
 	if err != nil {
 		log.Fatal(err)
@@ -274,6 +304,7 @@ func execCommand(dir string,w http.ResponseWriter,m map[string] string) string{
 		msg, _ :=json.Marshal(jsonResult{1,"Cmd execution failed "})
 		w.Header().Set("Content-Type","application/json")
 		w.Write(msg)
+		os.RemoveAll(pathFile)
 		return "1"
 
 	}
@@ -284,9 +315,9 @@ func execCommand(dir string,w http.ResponseWriter,m map[string] string) string{
 	} else {
 		fmt.Println(string(opBytes))
 	}
-	_, err = os.Lstat(dir + "bin/sc/" + m["Filename"] + ".nef")
+	_, err = os.Lstat(pathFile+"/" + "bin/sc/" + m["Filename"] + ".nef")
 	if !os.IsNotExist(err) {
-		f, err := ioutil.ReadFile(dir+"bin/sc/"+m["Filename"]+".nef")
+		f, err := ioutil.ReadFile(pathFile+"/"+"bin/sc/"+m["Filename"]+".nef")
 		if err != nil {
 			log.Fatal(err)
 		}
@@ -307,6 +338,7 @@ func execCommand(dir string,w http.ResponseWriter,m map[string] string) string{
 		msg, _ :=json.Marshal(jsonResult{2,".nef file doesm't exist "})
 		w.Header().Set("Content-Type","application/json")
 		w.Write(msg)
+		os.RemoveAll(pathFile)
 		return "2"
 
 	}
@@ -317,9 +349,8 @@ func execCommand(dir string,w http.ResponseWriter,m map[string] string) string{
 	//	fmt.Println(res.Script)
 }
 // 向链上结点请求合约的nef数据
-func getContractState(w http.ResponseWriter,m1 map[string] string,m2 map[string] int) (string,string) {
+func getContractState(pathFile string,w http.ResponseWriter,m1 map[string] string,m2 map[string] int) (string,string) {
 	rt := os.ExpandEnv("${RUNTIME}")
-	fmt.Println(rt)
 	var resp *http.Response
 	payload, err := json.Marshal(map[string]interface{}{
 		"jsonrpc": "2.0",
@@ -329,14 +360,17 @@ func getContractState(w http.ResponseWriter,m1 map[string] string,m2 map[string]
 		},
 		"id": 1,
 	})
-	if rt !="mainnet" || rt!="testnet"{
+	if rt !="mainnet" && rt!="testnet"{
 		rt = "mainnet"
 	}
+	fmt.Println("RPC params: ContractHash:"+getContract(m1))
 	switch rt {
 	case "mainnet":
 		resp, err = http.Post(RPCNODEMAIN, "application/json", bytes.NewReader(payload))
+		fmt.Println("Runtime is:"+rt)
 	case "testnet":
 		resp, err = http.Post(RPCNODETEST, "application/json", bytes.NewReader(payload))
+		fmt.Println("Runtime is:"+rt)
 	}
 
 	if err != nil {
@@ -344,6 +378,7 @@ func getContractState(w http.ResponseWriter,m1 map[string] string,m2 map[string]
 		msg, _ :=json.Marshal(jsonResult{3,"RPC Node doesn't exsite! "})
 		w.Header().Set("Content-Type","application/json")
 		w.Write(msg)
+		os.RemoveAll(pathFile)
 		return "","3"
 	}
 	defer resp.Body.Close()
@@ -353,13 +388,14 @@ func getContractState(w http.ResponseWriter,m1 map[string] string,m2 map[string]
 
 	body, _ := ioutil.ReadAll(resp.Body)
 
-	fmt.Println("response Body:", string(body))
+	//fmt.Println("response Body:", string(body))
 	if gjson.Get(string(body),"error").Exists() {
 		message:=gjson.Get(string(body),"error.message").String()
 		fmt.Println("================="+message+"===============")
 		msg, _ :=json.Marshal(jsonResult{4,message})
 		w.Header().Set("Content-Type","application/json")
 		w.Write(msg)
+		os.RemoveAll(pathFile)
 		return "","4"
 	}
 
@@ -396,7 +432,7 @@ func intializeMongoOnlineClient(cfg Config, ctx context.Context) (*mongo.Client,
 	rt := os.ExpandEnv("${RUNTIME}")
 	var clientOptions *options.ClientOptions
 	var dbOnline string
-	if rt != "mainnet" || rt !="testnet"{
+	if rt != "mainnet" && rt !="testnet"{
 		rt = "mainnet"
 	}
 	switch rt {
@@ -439,7 +475,9 @@ func getId(m map[string] int)  int{
 }
 //监听127.0.0.1:1926端口
 func main() {
+
 	fmt.Println("Server start")
+	fmt.Println("YOUR ENV IS " +os.ExpandEnv("${RUNTIME}"))
 	mux := http.NewServeMux()
 	mux.HandleFunc("/upload",func(writer http.ResponseWriter, request *http.Request){
 		multipleFile(writer,request)
