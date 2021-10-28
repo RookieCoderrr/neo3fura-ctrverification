@@ -1,0 +1,23 @@
+# Database credentials
+#database_dev:
+#  host: "s-uf63bd0cc5896674-pub.mongodb.rds.aliyuncs.com"
+#  port: "3717"
+#  user: "Vincent"
+#  pass: "QMRhLk9m8rqXWC3X9pMJ"
+#  dbname: "neofura"
+#  database: "neofura"
+database_main:
+  host: "20.106.201.244"
+  port: "27018"
+  user: "qinzilie"
+  pass: "1KVhcYXa12XC36nhkwlG"
+  dbname: "neofura"
+  database: "neofura"
+
+database_test:
+  host: "20.106.201.244"
+  port: "27018"
+  user: "qinzilie"
+  pass: "1KVhcYXa12XC36nhkwlG"
+  dbname: "testneofura"
+  database: "testneofura"
