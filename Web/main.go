@@ -274,13 +274,13 @@ func execCommand(pathFile string,w http.ResponseWriter,m map[string] string) str
 	//根据用户上传参数选择对应的编译器
 	cmd:=exec.Command("echo")
 	if getVersion(m)=="Neo.Compiler.CSharp 3.0.0"{
-		cmd= exec.Command("/Users/qinzilie/flamingo-contract-swap/Swap/flamingo-contract-swap/c/nccs")
+		cmd= exec.Command("/go/application/c/nccs")
 		fmt.Println("use 3.0.0 compiler")
 	} else if getVersion(m)=="Neo.Compiler.CSharp 3.0.2"{
-		cmd = exec.Command("/Users/qinzilie/flamingo-contract-swap/Swap/flamingo-contract-swap/b/nccs")
+		cmd = exec.Command("/go/application/b/nccs")
 		fmt.Println("use 3.0.2 compiler")
 	} else if getVersion(m)=="Neo.Compiler.CSharp 3.0.3" {
-		cmd = exec.Command("/Users/qinzilie/flamingo-contract-swap/Swap/flamingo-contract-swap/a/nccs")
+		cmd = exec.Command("/go/application/a/nccs")
 		fmt.Println("use 3.0.3 compiler")
 	} else {
 		fmt.Println("===============Compiler version doesn't exist==============")
@@ -482,9 +482,9 @@ func main() {
 	mux.HandleFunc("/upload",func(writer http.ResponseWriter, request *http.Request){
 		multipleFile(writer,request)
 	})
-	mux.Handle("/metrics", promhttp.Handler())
+	mux.Handle("/", promhttp.Handler())
 	handler := cors.Default().Handler(mux)
-	err := http.ListenAndServe("127.0.0.1:1926", handler)
+	err := http.ListenAndServe("127.0.0.1:1927", handler)
 	if err != nil {
 		fmt.Println("listen and server error")
 	}
