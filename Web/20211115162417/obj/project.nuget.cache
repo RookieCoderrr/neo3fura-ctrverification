@@ -1,0 +1,10 @@
+{
+  "version": 2,
+  "dgSpecHash": "865IRjchgTx9mH8OFHgVwyjJYOOqpd3xktvdGm3AVsQKWy1gYuDvHxFb5q/xRHXE+2mmr0TIRFv5Y4tTpiIhOA==",
+  "success": true,
+  "projectFilePath": "/Users/qinzilie/neo3fura-ctrverification/neo3fura-ctrverification/Web/20211115162417/FTWContract.csproj",
+  "expectedPackageFiles": [
+    "/Users/qinzilie/.nuget/packages/neo.smartcontract.framework/3.0.3/neo.smartcontract.framework.3.0.3.nupkg.sha512"
+  ],
+  "logs": []
+}

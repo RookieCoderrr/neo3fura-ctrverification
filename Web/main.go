@@ -28,7 +28,7 @@ import (
 )
 
 // 定义主网和测试网节点常量，之后根据部署主网测试网选择响应的结点
-const RPCNODEMAIN = "https://neofura.ngd.network:1927"
+const RPCNODEMAIN = "https://neofura.ngd.network"
 
 const RPCNODETEST = "https://testneofura.ngd.network:444"
 
@@ -103,8 +103,8 @@ func multipleFile(w http.ResponseWriter, r *http.Request) {
 			} else if part.FormName() == "Version" {
 				m1[part.FormName()] = string(data)
 				//fmt.Println(m1)
-			} else {
-				//fmt.Println("map storage error")
+			} else if part.FormName() == "CompileCommand"{
+				m1[part.FormName()] = string(data)
 			}
 		} else {
 			//dst,_ :=os.Create("./"+part.FileName()
@@ -248,7 +248,6 @@ func multipleFile(w http.ResponseWriter, r *http.Request) {
 			fmt.Println("=================Your source code doesn't match the contract on bloackchain===============")
 			msg, _ :=json.Marshal(jsonResult{8,"Contract Source Code Verification error!"})
 			w.Header().Set("Content-Type","application/json")
-			os.RemoveAll(pathFile)
 			w.Write(msg)
 		}
 
@@ -274,14 +273,34 @@ func execCommand(pathFile string,w http.ResponseWriter,m map[string] string) str
 	//根据用户上传参数选择对应的编译器
 	cmd:=exec.Command("echo")
 	if getVersion(m)=="Neo.Compiler.CSharp 3.0.0"{
-		cmd= exec.Command("/go/application/c/nccs")
-		fmt.Println("use 3.0.0 compiler")
+		if getCompileCommand(m)=="nccs --no-optimize" {
+			cmd= exec.Command("/Users/qinzilie/flamingo-contract-swap/Swap/flamingo-contract-swap/c/nccs","--no-optimize")
+			fmt.Println("Compiler: Neo.Compiler.CSharp 3.0.0, Command: nccs --no-optimize")
+		}
+		if getCompileCommand(m)=="nccs" {
+			cmd= exec.Command("/Users/qinzilie/flamingo-contract-swap/Swap/flamingo-contract-swap/c/nccs")
+			fmt.Println("Compiler: Neo.Compiler.CSharp 3.0.0, Command: nccs")
+		}
+
 	} else if getVersion(m)=="Neo.Compiler.CSharp 3.0.2"{
-		cmd = exec.Command("/go/application/b/nccs")
-		fmt.Println("use 3.0.2 compiler")
+		if getCompileCommand(m)=="nccs --no-optimize" {
+			cmd= exec.Command("/Users/qinzilie/flamingo-contract-swap/Swap/flamingo-contract-swap/b/nccs","--no-optimize")
+			fmt.Println("Compiler: Neo.Compiler.CSharp 3.0.2, Command: nccs --no-optimize")
+		}
+		if getCompileCommand(m)=="nccs" {
+			cmd= exec.Command("/Users/qinzilie/flamingo-contract-swap/Swap/flamingo-contract-swap/b/nccs")
+			fmt.Println("Compiler: Neo.Compiler.CSharp 3.0.2, Command: nccs")
+		}
+
 	} else if getVersion(m)=="Neo.Compiler.CSharp 3.0.3" {
-		cmd = exec.Command("/go/application/a/nccs")
-		fmt.Println("use 3.0.3 compiler")
+		if getCompileCommand(m)=="nccs --no-optimize" {
+			cmd= exec.Command("/Users/qinzilie/flamingo-contract-swap/Swap/flamingo-contract-swap/a/nccs","--no-optimize")
+			fmt.Println("Compiler: Neo.Compiler.CSharp 3.0.3, Command: nccs --no-optimize")
+		}
+		if getCompileCommand(m)=="nccs" {
+			cmd= exec.Command("/Users/qinzilie/flamingo-contract-swap/Swap/flamingo-contract-swap/a/nccs")
+			fmt.Println("Compiler: Neo.Compiler.CSharp 3.0.3, Command: nccs")
+		}
 	} else {
 		fmt.Println("===============Compiler version doesn't exist==============")
 		msg, _ :=json.Marshal(jsonResult{0,"Compiler version doesn't exist, please choose Neo.Compiler.CSharp 3.0.0/Neo.Compiler.CSharp 3.0.2/Neo.Compiler.CSharp 3.0.3 version"})
@@ -338,7 +357,7 @@ func execCommand(pathFile string,w http.ResponseWriter,m map[string] string) str
 		msg, _ :=json.Marshal(jsonResult{2,".nef file doesm't exist "})
 		w.Header().Set("Content-Type","application/json")
 		w.Write(msg)
-		os.RemoveAll(pathFile)
+
 		return "2"
 
 	}
@@ -348,6 +367,24 @@ func execCommand(pathFile string,w http.ResponseWriter,m map[string] string) str
 	//	fmt.Println(res.Tokens)
 	//	fmt.Println(res.Script)
 }
+func verifyNef(name string) string{
+	f, err := ioutil.ReadFile("./"+name+".nef")
+	if err != nil {
+		log.Fatal(err)
+	}
+	res,err :=nef.FileFromBytes(f)
+	if err != nil {
+		log.Fatal("error")
+	}
+	//fmt.Println(res.Script)
+	var result = base64.StdEncoding.EncodeToString(res.Script)
+
+
+	fmt.Println("========== "+name+" ============")
+	fmt.Println(result)
+	return result
+
+	}
 // 向链上结点请求合约的nef数据
 func getContractState(pathFile string,w http.ResponseWriter,m1 map[string] string,m2 map[string] int) (string,string) {
 	rt := os.ExpandEnv("${RUNTIME}")
@@ -473,11 +510,20 @@ func getUpdateCounter(m map[string] int)  int{
 func getId(m map[string] int)  int{
 	return m["id"]
 }
+func getCompileCommand(m map[string] string) string{
+	return m["CompileCommand"]
+}
 //监听127.0.0.1:1926端口
 func main() {
 
 	fmt.Println("Server start")
 	fmt.Println("YOUR ENV IS " +os.ExpandEnv("${RUNTIME}"))
+	verifyNef("FTWContract_notag")
+	verifyNef("FTWContract_twotag")
+	verifyNef("FTWContract_nooptimizetag")
+	verifyNef("FTWContract_debugtag")
+	fmt.Println("VwABDANGVFdAVwABeDUGAAAAQFcAAXg1BgAAAEBXAAF4NQYAAABAVwABQFcAARhADAEA2zBBm/ZnzkGSXegxStgmBEUQ2yFAStgmBEUQ2yFAQZJd6DFAQZv2Z85AVwIBIXhwaAuXJw0AAAAR2yAjEQAAACF4StkoUMoAFLOrqiEnKAAAAAwgVGhlIGFyZ3VtZW50ICJvd25lciIgaXMgaW52YWxpZC46IUGb9mfOERGIThBR0FASwHFpeEsRzlCLUBDOQZJd6DFK2CYERRDbISMFAAAAQErZKFDKABSzq0ARiE4QUdBQEsBASxHOUItQEM5Bkl3oMUBXAwEhQZv2Z85wDAEA2zBxaWhBkl3oMUrYJgRFENshcmp4nkpyRWppaEHmPxiEQEHmPxiEQFcCAiFBm/ZnzhERiE4QUdBQEsBwaHhLEc5Qi1AQzkGSXegxStgmBEUQ2yFxaXmeSnFFaRC1Jw0AAAAQ2yAjPQAAACFpELMnGQAAAGh4SxHOUItQEM5BL1jF7SMXAAAAIWh4aRJNEc5Ri1EQzkHmPxiEIRHbICMFAAAAQEsRzlCLUBDOQS9Yxe1AEk0RzlGLURDOQeY/GIRAVwIEIXhwaAuXJw0AAAAR2yAjEQAAACF4StkoUMoAFLOrqiEnJwAAAAwfVGhlIGFyZ3VtZW50ICJmcm9tIiBpcyBpbnZhbGlkLjoheXFpC5cnDQAAABHbICMRAAAAIXlK2ShQygAUs6uqISclAAAADB1UaGUgYXJndW1lbnQgInRvIiBpcyBpbnZhbGlkLjohehC1Jy0AAAAMJVRoZSBhbW91bnQgbXVzdCBiZSBhIHBvc2l0aXZlIG51bWJlci46IXhB+CfsjKonDQAAABDbICNBAAAAIXoQmCcmAAAAIXqbeDWG/v//qicNAAAAENsgIyEAAAAhenk1cP7//0UhIXt6eXg1FAAAABHbICMFAAAAQEH4J+yMQFcCBCHCSnjPSnnPSnrPDAhUcmFuc2ZlckGVAW9heXBoC5eqJQ0AAAAQ2yAjDwAAACF5NwAAcWkLl6ohJyIAAAB7engTwB8MDm9uTkVQMTdQYXltZW50eUFifVtSRSFANwAAQEFifVtSQFcAAiF5mRC1Jw4AAAAMBmFtb3VudDoheRCzJwoAAAAjHQAAACF5eDXA/f//RXk1hP3//wt5eAs1YP///0BXAAIheZkQtScOAAAADAZhbW91bnQ6IXkQsycKAAAAIzEAAAAheZt4NYL9//+qJxEAAAAMCWV4Y2VwdGlvbjoheZs1M/3//wt5C3g1D////0BXAQIheHBoC5cnDQAAABHbICMRAAAAIXhK2ShQygAUs6uqIScnAAAADB9UaGUgYXJndW1lbnQgImZyb20iIGlzIGludmFsaWQuOiF4Qfgn7IyqJxkAAAAMEU5vIGF1dGhvcml6YXRpb24uOiF5eDVB////QFcDAiF5JwoAAAAjXAAAACE12Pv//xC3JyEAAAAMGUNvbnRyYWN0IGFscmVheSBkZXBsb3llZC46IUEtUQgwcAwB/9swcWgTzmlBm/ZnzkHmPxiEAwAAxS68orEAcmpoE841nf7//0BBLVEIMEBB5j8YhEBXAwIhDAH/2zBwaEGb9mfOQZJd6DFK2CUPAAAASsoAFCkGAAAAOiFxQS1RCDByaWoTzpclDQAAABDbICMMAAAAIWlB+CfsjCEnEgAAACELeXg3AQAhIzYAAAAhIQwrT25seSBjb250cmFjdCBvd25lciBjYW4gdXBkYXRlIHRoZSBjb250cmFjdDohIUA3AQBAVwADIQwkUGF5bWVudCBpcyBkaXNhYmxlIG9uIHRoaXMgY29udHJhY3QhOkBWAQqx+v//CoH6//8SwGBAwkpYz0o1fPr//yNu+v//wkpYz0o1bfr//yOK+v//"=="VwABDANGVFdAVwABeDUGAAAAQFcAAXg1BgAAAEBXAAF4NQYAAABAVwABQFcAARhADAEA2zBBm/ZnzkGSXegxStgmBEUQ2yFAStgmBEUQ2yFAQZJd6DFAQZv2Z85AVwIBIXhwaAuXJw0AAAAR2yAjEQAAACF4StkoUMoAFLOrqiEnKAAAAAwgVGhlIGFyZ3VtZW50ICJvd25lciIgaXMgaW52YWxpZC46IUGb9mfOERGIThBR0FASwHFpeEsRzlCLUBDOQZJd6DFK2CYERRDbISMFAAAAQErZKFDKABSzq0ARiE4QUdBQEsBASxHOUItQEM5Bkl3oMUBXAwEhQZv2Z85wDAEA2zBxaWhBkl3oMUrYJgRFENshcmp4nkpyRWppaEHmPxiEQEHmPxiEQFcCAiFBm/ZnzhERiE4QUdBQEsBwaHhLEc5Qi1AQzkGSXegxStgmBEUQ2yFxaXmeSnFFaRC1Jw0AAAAQ2yAjPQAAACFpELMnGQAAAGh4SxHOUItQEM5BL1jF7SMXAAAAIWh4aRJNEc5Ri1EQzkHmPxiEIRHbICMFAAAAQEsRzlCLUBDOQS9Yxe1AEk0RzlGLURDOQeY/GIRAVwIEIXhwaAuXJw0AAAAR2yAjEQAAACF4StkoUMoAFLOrqiEnJwAAAAwfVGhlIGFyZ3VtZW50ICJmcm9tIiBpcyBpbnZhbGlkLjoheXFpC5cnDQAAABHbICMRAAAAIXlK2ShQygAUs6uqISclAAAADB1UaGUgYXJndW1lbnQgInRvIiBpcyBpbnZhbGlkLjohehC1Jy0AAAAMJVRoZSBhbW91bnQgbXVzdCBiZSBhIHBvc2l0aXZlIG51bWJlci46IXhB+CfsjKonDQAAABDbICNBAAAAIXoQmCcmAAAAIXqbeDWG/v//qicNAAAAENsgIyEAAAAhenk1cP7//0UhIXt6eXg1FAAAABHbICMFAAAAQEH4J+yMQFcCBCHCSnjPSnnPSnrPDAhUcmFuc2ZlckGVAW9heXBoC5eqJQ0AAAAQ2yAjDwAAACF5NwAAcWkLl6ohJyIAAAB7engTwB8MDm9uTkVQMTdQYXltZW50eUFifVtSRSFANwAAQEFifVtSQFcAAiF5mRC1Jw4AAAAMBmFtb3VudDoheRCzJwoAAAAjHQAAACF5eDXA/f//RXk1hP3//wt5eAs1YP///0BXAAIheZkQtScOAAAADAZhbW91bnQ6IXkQsycKAAAAIzEAAAAheZt4NYL9//+qJxEAAAAMCWV4Y2VwdGlvbjoheZs1M/3//wt5C3g1D////0BXAQIheHBoC5cnDQAAABHbICMRAAAAIXhK2ShQygAUs6uqIScnAAAADB9UaGUgYXJndW1lbnQgImZyb20iIGlzIGludmFsaWQuOiF4Qfgn7IyqJxkAAAAMEU5vIGF1dGhvcml6YXRpb24uOiF5eDVB////QFcDAiF5JwoAAAAjXAAAACE12Pv//xC3JyEAAAAMGUNvbnRyYWN0IGFscmVheSBkZXBsb3llZC46IUEtUQgwcAwB/9swcWgTzmlBm/ZnzkHmPxiEAwAAxS68orEAcmpoE841nf7//0BBLVEIMEBB5j8YhEBXAwIhDAH/2zBwaEGb9mfOQZJd6DFK2CUPAAAASsoAFCkGAAAAOiFxQS1RCDByaWoTzpclDQAAABDbICMMAAAAIWlB+CfsjCEnEgAAACELeXg3AQAhIzYAAAAhIQwrT25seSBjb250cmFjdCBvd25lciBjYW4gdXBkYXRlIHRoZSBjb250cmFjdDohIUA3AQBAVwADIQwkUGF5bWVudCBpcyBkaXNhYmxlIG9uIHRoaXMgY29udHJhY3QhOkBWAQqx+v//CoH6//8SwGBAwkpYz0o1fPr//yNu+v//wkpYz0o1bfr//yOK+v//")
+	fmt.Println("VwABDANGVFdAVwABeDQDQFcAAXg0A0BXAAF4NANAVwABQFcAARhADAEA2zBBm/ZnzkGSXegxStgmBEUQ2yFAStgmBEUQ2yFAQZJd6DFAQZv2Z85AVwEBeHBoC5cmBxHbICINeErZKFDKABSzq6omJQwgVGhlIGFyZ3VtZW50ICJvd25lciIgaXMgaW52YWxpZC46QZv2Z84REYhOEFHQUBLAcGh4SxHOUItQEM5Bkl3oMUrYJgRFENshIgJAStkoUMoAFLOrQBGIThBR0FASwEBLEc5Qi1AQzkGSXegxQFcDAUGb9mfOcAwBANswcWloQZJd6DFK2CYERRDbIXJqeJ5KckVqaWhB5j8YhEBB5j8YhEBXAgJBm/ZnzhERiE4QUdBQEsBwaHhLEc5Qi1AQzkGSXegxStgmBEUQ2yFxaXmeSnFFaRC1JgcQ2yAiLmkQsyYTaHhLEc5Qi1AQzkEvWMXtIhNoeGkSTRHOUYtREM5B5j8YhBHbICICQEsRzlCLUBDOQS9Yxe1AEk0RzlGLURDOQeY/GIRAVwEEeHBoC5cmBxHbICINeErZKFDKABSzq6omJAwfVGhlIGFyZ3VtZW50ICJmcm9tIiBpcyBpbnZhbGlkLjp5cGgLlyYHEdsgIg15StkoUMoAFLOrqiYiDB1UaGUgYXJndW1lbnQgInRvIiBpcyBpbnZhbGlkLjp6ELUmKgwlVGhlIGFtb3VudCBtdXN0IGJlIGEgcG9zaXRpdmUgbnVtYmVyLjp4Qfgn7IyqJgcQ2yAiKnoQmCYaept4NcH+//+qJgcQ2yAiFXp5NbL+//9Fe3p5eDQOEdsgIgJAQfgn7IxAVwEEwkp4z0p5z0p6zwwIVHJhbnNmZXJBlQFvYXlwaAuXqiQHENsgIgt5NwAAcGgLl6omH3t6eBPAHwwOb25ORVAxN1BheW1lbnR5QWJ9W1JFQDcAAEBBYn1bUkBXAAJ5mRC1JgsMBmFtb3VudDp5ELMmBCIZeXg1I/7//0V5Nej9//8LeXgLNXn///9AVwACeZkQtSYLDAZhbW91bnQ6eRCzJgQiKXmbeDXx/f//qiYODAlleGNlcHRpb246eZs1p/3//wt5C3g1OP///0BXAQJ4cGgLlyYHEdsgIg14StkoUMoAFLOrqiYkDB9UaGUgYXJndW1lbnQgImZyb20iIGlzIGludmFsaWQuOnhB+CfsjKomFgwRTm8gYXV0aG9yaXphdGlvbi46eXg1Yv///0BXAwJ5JgQiVDV1/P//ELcmHgwZQ29udHJhY3QgYWxyZWF5IGRlcGxveWVkLjpBLVEIMHAMAf/bMHFoE85pQZv2Z85B5j8YhAMAAMUuvKKxAHJqaBPONdb+//9AQS1RCDBAQeY/GIRAVwMCDAH/2zBwaEGb9mfOQZJd6DFK2CQJSsoAFCgDOnFBLVEIMHJpahPOlyQHENsgIghpQfgn7IwmCgt5eDcBACIwDCtPbmx5IGNvbnRyYWN0IG93bmVyIGNhbiB1cGRhdGUgdGhlIGNvbnRyYWN0OkA3AQBAVwADDCRQYXltZW50IGlzIGRpc2FibGUgb24gdGhpcyBjb250cmFjdCE6QFYBCm/7//8KSPv//xLAYEDCSljPSjVD+///IzX7///CSljPSjU0+///I0j7//8="=="VwABDANGVFdAVwABeDQDQFcAAXg0A0BXAAF4NANAVwABQFcAARhADAEA2zBBm/ZnzkGSXegxStgmBEUQ2yFAStgmBEUQ2yFAQZJd6DFAQZv2Z85AVwEBeHBoC5cmBxHbICINeErZKFDKABSzq6omJQwgVGhlIGFyZ3VtZW50ICJvd25lciIgaXMgaW52YWxpZC46QZv2Z84REYhOEFHQUBLAcGh4SxHOUItQEM5Bkl3oMUrYJgRFENshIgJAStkoUMoAFLOrQBGIThBR0FASwEBLEc5Qi1AQzkGSXegxQFcDAUGb9mfOcAwBANswcWloQZJd6DFK2CYERRDbIXJqeJ5KckVqaWhB5j8YhEBB5j8YhEBXAgJBm/ZnzhERiE4QUdBQEsBwaHhLEc5Qi1AQzkGSXegxStgmBEUQ2yFxaXmeSnFFaRC1JgcQ2yAiLmkQsyYTaHhLEc5Qi1AQzkEvWMXtIhNoeGkSTRHOUYtREM5B5j8YhBHbICICQEsRzlCLUBDOQS9Yxe1AEk0RzlGLURDOQeY/GIRAVwEEeHBoC5cmBxHbICINeErZKFDKABSzq6omJAwfVGhlIGFyZ3VtZW50ICJmcm9tIiBpcyBpbnZhbGlkLjp5cGgLlyYHEdsgIg15StkoUMoAFLOrqiYiDB1UaGUgYXJndW1lbnQgInRvIiBpcyBpbnZhbGlkLjp6ELUmKgwlVGhlIGFtb3VudCBtdXN0IGJlIGEgcG9zaXRpdmUgbnVtYmVyLjp4Qfgn7IyqJgcQ2yAiKnoQmCYaept4NcH+//+qJgcQ2yAiFXp5NbL+//9Fe3p5eDQOEdsgIgJAQfgn7IxAVwEEwkp4z0p5z0p6zwwIVHJhbnNmZXJBlQFvYXlwaAuXqiQHENsgIgt5NwAAcGgLl6omH3t6eBPAHwwOb25ORVAxN1BheW1lbnR5QWJ9W1JFQDcAAEBBYn1bUkBXAAJ5mRC1JgsMBmFtb3VudDp5ELMmBCIZeXg1I/7//0V5Nej9//8LeXgLNXn///9AVwACeZkQtSYLDAZhbW91bnQ6eRCzJgQiKXmbeDXx/f//qiYODAlleGNlcHRpb246eZs1p/3//wt5C3g1OP///0BXAQJ4cGgLlyYHEdsgIg14StkoUMoAFLOrqiYkDB9UaGUgYXJndW1lbnQgImZyb20iIGlzIGludmFsaWQuOnhB+CfsjKomFgwRTm8gYXV0aG9yaXphdGlvbi46eXg1Yv///0BXAwJ5JgQiVDV1/P//ELcmHgwZQ29udHJhY3QgYWxyZWF5IGRlcGxveWVkLjpBLVEIMHAMAf/bMHFoE85pQZv2Z85B5j8YhAMAAMUuvKKxAHJqaBPONdb+//9AQS1RCDBAQeY/GIRAVwMCDAH/2zBwaEGb9mfOQZJd6DFK2CQJSsoAFCgDOnFBLVEIMHJpahPOlyQHENsgIghpQfgn7IwmCgt5eDcBACIwDCtPbmx5IGNvbnRyYWN0IG93bmVyIGNhbiB1cGRhdGUgdGhlIGNvbnRyYWN0OkA3AQBAVwADDCRQYXltZW50IGlzIGRpc2FibGUgb24gdGhpcyBjb250cmFjdCE6QFYBCm/7//8KSPv//xLAYEDCSljPSjVD+///IzX7///CSljPSjU0+///I0j7//8=")
 	mux := http.NewServeMux()
 	mux.HandleFunc("/upload",func(writer http.ResponseWriter, request *http.Request){
 		multipleFile(writer,request)

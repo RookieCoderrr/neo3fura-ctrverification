@@ -1,0 +1,159 @@
+{
+  "version": 3,
+  "targets": {
+    "net5.0": {
+      "Neo.SmartContract.Framework/3.0.3": {
+        "type": "package",
+        "compile": {
+          "lib/net5.0/Neo.SmartContract.Framework.dll": {}
+        },
+        "runtime": {
+          "lib/net5.0/Neo.SmartContract.Framework.dll": {}
+        }
+      }
+    }
+  },
+  "libraries": {
+    "Neo.SmartContract.Framework/3.0.3": {
+      "sha512": "s67M2htQjsx7/EEPFO6ttw5dBeXqnFi3GUi2exiy/xISL/l8Rl4XUUWB6p/jqBNfpItOcHz0+mYW7NIkgQ3mjg==",
+      "type": "package",
+      "path": "neo.smartcontract.framework/3.0.3",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "lib/net5.0/Neo.SmartContract.Framework.dll",
+        "neo.smartcontract.framework.3.0.3.nupkg.sha512",
+        "neo.smartcontract.framework.nuspec",
+        "src/Attributes/CallingConventionAttribute.cs",
+        "src/Attributes/ContractAttribute.cs",
+        "src/Attributes/ContractHashAttribute.cs",
+        "src/Attributes/ContractPermissionAttribute.cs",
+        "src/Attributes/ContractSourceCodeAttribute.cs",
+        "src/Attributes/ContractTrustAttribute.cs",
+        "src/Attributes/InitialValueAttribute.cs",
+        "src/Attributes/ManifestExtraAttribute.cs",
+        "src/Attributes/OpCodeAttribute.cs",
+        "src/Attributes/SafeAttribute.cs",
+        "src/Attributes/SupportedStandardsAttribute.cs",
+        "src/Attributes/SyscallAttribute.cs",
+        "src/ByteString.cs",
+        "src/ContractParameterType.cs",
+        "src/ECPoint.cs",
+        "src/ExecutionEngine.cs",
+        "src/Helper.cs",
+        "src/IApiInterface.cs",
+        "src/List.cs",
+        "src/Map.cs",
+        "src/Native/ContractManagement.cs",
+        "src/Native/CryptoLib.cs",
+        "src/Native/GAS.cs",
+        "src/Native/Ledger.cs",
+        "src/Native/NEO.cs",
+        "src/Native/NamedCurve.cs",
+        "src/Native/NeoAccountState.cs",
+        "src/Native/Oracle.cs",
+        "src/Native/OracleResponseCode.cs",
+        "src/Native/Policy.cs",
+        "src/Native/Role.cs",
+        "src/Native/RoleManagement.cs",
+        "src/Native/StdLib.cs",
+        "src/Nep11Token.cs",
+        "src/Nep11TokenState.cs",
+        "src/Nep17Token.cs",
+        "src/OpCode.cs",
+        "src/Properties/AssemblyInfo.cs",
+        "src/Services/Block.cs",
+        "src/Services/CallFlags.cs",
+        "src/Services/Contract.cs",
+        "src/Services/ContractAbi.cs",
+        "src/Services/ContractEventDescriptor.cs",
+        "src/Services/ContractGroup.cs",
+        "src/Services/ContractManifest.cs",
+        "src/Services/ContractMethodDescriptor.cs",
+        "src/Services/ContractParameterDefinition.cs",
+        "src/Services/ContractPermission.cs",
+        "src/Services/Crypto.cs",
+        "src/Services/FindOptions.cs",
+        "src/Services/Iterator.cs",
+        "src/Services/Notification.cs",
+        "src/Services/Runtime.cs",
+        "src/Services/Storage.cs",
+        "src/Services/StorageContext.cs",
+        "src/Services/StorageMap.cs",
+        "src/Services/Transaction.cs",
+        "src/Services/TriggerType.cs",
+        "src/SmartContract.cs",
+        "src/StackItemType.cs",
+        "src/TokenContract.cs",
+        "src/UInt160.cs",
+        "src/UInt256.cs"
+      ]
+    }
+  },
+  "projectFileDependencyGroups": {
+    "net5.0": [
+      "Neo.SmartContract.Framework >= 3.0.3"
+    ]
+  },
+  "packageFolders": {
+    "/Users/qinzilie/.nuget/packages/": {}
+  },
+  "project": {
+    "version": "1.0.0",
+    "restore": {
+      "projectUniqueName": "/Users/qinzilie/neo3fura-ctrverification/neo3fura-ctrverification/Web/20211112180743/FTWContract.csproj",
+      "projectName": "FTWContract",
+      "projectPath": "/Users/qinzilie/neo3fura-ctrverification/neo3fura-ctrverification/Web/20211112180743/FTWContract.csproj",
+      "packagesPath": "/Users/qinzilie/.nuget/packages/",
+      "outputPath": "/Users/qinzilie/neo3fura-ctrverification/neo3fura-ctrverification/Web/20211112180743/obj/",
+      "projectStyle": "PackageReference",
+      "configFilePaths": [
+        "/Users/qinzilie/.nuget/NuGet/NuGet.Config"
+      ],
+      "originalTargetFrameworks": [
+        "net5.0"
+      ],
+      "sources": {
+        "https://api.nuget.org/v3/index.json": {}
+      },
+      "frameworks": {
+        "net5.0": {
+          "targetAlias": "net5.0",
+          "projectReferences": {}
+        }
+      },
+      "warningProperties": {
+        "warnAsError": [
+          "NU1605"
+        ]
+      }
+    },
+    "frameworks": {
+      "net5.0": {
+        "targetAlias": "net5.0",
+        "dependencies": {
+          "Neo.SmartContract.Framework": {
+            "target": "Package",
+            "version": "[3.0.3, )"
+          }
+        },
+        "imports": [
+          "net461",
+          "net462",
+          "net47",
+          "net471",
+          "net472",
+          "net48"
+        ],
+        "assetTargetFallback": true,
+        "warn": true,
+        "frameworkReferences": {
+          "Microsoft.NETCore.App": {
+            "privateAssets": "all"
+          }
+        },
+        "runtimeIdentifierGraphPath": "/usr/local/share/dotnet/sdk/5.0.301/RuntimeIdentifierGraph.json"
+      }
+    }
+  }
+}
