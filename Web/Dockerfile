@@ -6,6 +6,7 @@ ENV GOPROXY="https://goproxy.cn"
 
 #ENV RUNTIME="mainnet"
 
+
 RUN mkdir application
 
 COPY . ./application
@@ -53,6 +54,7 @@ RUN python3 -m venv venv
 #RUN  chmod 777 c/nccs
 #
 #RUN  chmod 777 b/nccs
+
 
 RUN  chmod 777 d/nccs
 
