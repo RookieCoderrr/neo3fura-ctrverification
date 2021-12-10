@@ -4,7 +4,6 @@ ENV GO111MODULE="on"
 
 ENV GOPROXY="https://goproxy.cn"
 
-
 ENV RUNTIME="mainnet"
 
 RUN mkdir application
@@ -13,29 +12,35 @@ COPY . ./application
 
 WORKDIR "application"
 
+RUN  wget https://packages.microsoft.com/config/ubuntu/21.04/packages-microsoft-prod.deb -O packages-microsoft-prod.deb
 
-#RUN chmod 777 dotnet-install.sh
-#
-#RUN ./dotnet-install.sh -c 5.0
+RUN  dpkg -i packages-microsoft-prod.deb
 
-#RUN snap version
-#RUN snap install dotnet-runtime-50 --classic
-#
-#RUN snap alias dotnet-runtime-50.dotnet dotnet
+RUN  rm packages-microsoft-prod.deb
 
-#RUN export DOTNET_ROOT=/snap/dotnet-sdk/current
+RUN   apt-get update
 
-#RUN  apt-get update; \
-#       apt-get install -y apt-transport-https && \
-#       apt-get update && \
-#       apt-get install -y dotnet-runtime-5.0
+RUN   apt-get install -y apt-transport-https
 
+RUN   apt-get update
 
-#RUN dotnet tool install --tool-path a Neo.Compiler.CSharp --version 3.0.0
-#
-#RUN dotnet tool install --tool-path b Neo.Compiler.CSharp --version 3.0.2
-#
-#RUN dotnet tool install --tool-path c Neo.Compiler.CSharp --version 3.0.3
+RUN  apt-get install -y dotnet-sdk-6.0
+
+RUN  apt-get install -y aspnetcore-runtime-6.0
+
+RUN  apt-get install -y  python3
+
+RUN apt-get install -y python3-venv
+
+RUN python3 -m venv venv
+
+RUN  tar -xvf compiler.tar.gz
+
+RUN  chmod 777 compiler/a/nccs
+
+RUN  chmod 777 compiler/c/nccs
+
+RUN  chmod 777 compiler/b/nccs
 
 RUN  go build -o main main.go
 
