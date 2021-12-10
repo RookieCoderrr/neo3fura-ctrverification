@@ -55,6 +55,7 @@ RUN python3 -m venv venv
 #
 #RUN  chmod 777 b/nccs
 
+RUN tar -zxvf compiler2.tar.gz
 
 RUN  chmod 777 d/nccs
 
