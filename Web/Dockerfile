@@ -34,13 +34,17 @@ RUN apt-get install -y python3-venv
 
 RUN python3 -m venv venv
 
+RUN pip install neo3-boa
+
 RUN  tar -xvf compiler.tar.gz
 
-RUN  chmod 777 compiler/a/nccs
+RUN  chmod 777 a/nccs
 
-RUN  chmod 777 compiler/c/nccs
+RUN  chmod 777 c/nccs
 
-RUN  chmod 777 compiler/b/nccs
+RUN  chmod 777 b/nccs
+
+RUN  chmod 777 d/nccs
 
 RUN  go build -o main main.go
 

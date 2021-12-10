@@ -572,7 +572,7 @@ func main() {
 	})
 	mux.Handle("/", promhttp.Handler())
 	handler := cors.Default().Handler(mux)
-	err := http.ListenAndServe("127.0.0.1:1927", handler)
+	err := http.ListenAndServe("0.0.0.0:1927", handler)
 	if err != nil {
 		fmt.Println("listen and server error")
 	}
