@@ -1,0 +1,6 @@
+# Ignore config files
+.DS_Store
+../.idea/
+Web/config.yml
+go.sum
+go.mod
