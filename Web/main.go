@@ -284,44 +284,44 @@ func execCommand(pathFile string, w http.ResponseWriter, m map[string]string) st
 	//根据用户上传参数选择对应的编译器
 	cmd := exec.Command("echo")
 	if getVersion(m) == "neo3-boa" {
-		cmd = exec.Command("/bin/sh", "-c", "/go/application/pythonExec.sh")
+		cmd = exec.Command("/bin/sh", "-c", "/Users/qinzilie/neo3fura-ctrverification/neo3fura-ctrverification/Web/pythonExec.sh")
 		fmt.Println("Compiler: neo3-boa, Command: neo3-boa")
 	} else if getVersion(m) == "Neo.Compiler.CSharp 3.0.0" {
 		if getCompileCommand(m) == "nccs --no-optimize" {
-			cmd = exec.Command("/go/application/c/nccs", "--no-optimize")
+			cmd = exec.Command("/Users/qinzilie/flamingo-contract-swap/Swap/flamingo-contract-swap/c/nccs", "--no-optimize")
 			fmt.Println("Compiler: Neo.Compiler.CSharp 3.0.0, Command: nccs --no-optimize")
 		}
 		if getCompileCommand(m) == "nccs" {
-			cmd = exec.Command("/go/application/c/nccs")
+			cmd = exec.Command("/Users/qinzilie/flamingo-contract-swap/Swap/flamingo-contract-swap/c/nccs")
 			fmt.Println("Compiler: Neo.Compiler.CSharp 3.0.0, Command: nccs")
 		}
 
 	} else if getVersion(m) == "Neo.Compiler.CSharp 3.0.2" {
 		if getCompileCommand(m) == "nccs --no-optimize" {
-			cmd = exec.Command("/go/application/b/nccs", "--no-optimize")
+			cmd = exec.Command("/Users/qinzilie/flamingo-contract-swap/Swap/flamingo-contract-swap/b/nccs", "--no-optimize")
 			fmt.Println("Compiler: Neo.Compiler.CSharp 3.0.2, Command: nccs --no-optimize")
 		}
 		if getCompileCommand(m) == "nccs" {
-			cmd = exec.Command("/go/application/b/nccs")
+			cmd = exec.Command("/Users/qinzilie/flamingo-contract-swap/Swap/flamingo-contract-swap/b/nccs")
 			fmt.Println("Compiler: Neo.Compiler.CSharp 3.0.2, Command: nccs")
 		}
 
 	} else if getVersion(m) == "Neo.Compiler.CSharp 3.0.3" {
 		if getCompileCommand(m) == "nccs --no-optimize" {
-			cmd = exec.Command("/go/application/a/nccs", "--no-optimize")
+			cmd = exec.Command("/Users/qinzilie/flamingo-contract-swap/Swap/flamingo-contract-swap/a/nccs", "--no-optimize")
 			fmt.Println("Compiler: Neo.Compiler.CSharp 3.0.3, Command: nccs --no-optimize")
 		}
 		if getCompileCommand(m) == "nccs" {
-			cmd = exec.Command("/go/application/a/nccs")
+			cmd = exec.Command("/Users/qinzilie/flamingo-contract-swap/Swap/flamingo-contract-swap/a/nccs")
 			fmt.Println("Compiler: Neo.Compiler.CSharp 3.0.3, Command: nccs")
 		}
 	} else if getVersion(m) == "Neo.Compiler.CSharp 3.1.0" {
 		if getCompileCommand(m) == "nccs --no-optimize" {
-			cmd = exec.Command("/go/application/d/nccs", "--no-optimize")
+			cmd = exec.Command("/Users/qinzilie/flamingo-contract-swap/Swap/flamingo-contract-swap/d/nccs", "--no-optimize")
 			fmt.Println("Compiler: Neo.Compiler.CSharp 3.1.0, Command: nccs --no-optimize")
 		}
 		if getCompileCommand(m) == "nccs" {
-			cmd = exec.Command("/go/application/d/nccs")
+			cmd = exec.Command("/Users/qinzilie/flamingo-contract-swap/Swap/flamingo-contract-swap/d/nccs")
 			fmt.Println("Compiler: Neo.Compiler.CSharp 3.1.0, Command: nccs")
 		}
 	} else {
@@ -395,7 +395,7 @@ func execCommand(pathFile string, w http.ResponseWriter, m map[string]string) st
 
 	} else {
 		fmt.Println("============.nef file doesn't exist===========", err)
-		msg, _ := json.Marshal(jsonResult{2, ".nef file doesm't exist "})
+		msg, _ := json.Marshal(jsonResult{2, ".nef file doesn't exist "})
 		w.Header().Set("Content-Type", "application/json")
 		w.Write(msg)
 
