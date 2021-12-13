@@ -12,7 +12,7 @@ then
 
     docker build -t verify:v1 .
 
-    docker run -env RUNTIME="testnet" -itd --name verifyContract -p 1927:1927 verify:v1
+    docker run --env RUNTIME="testnet" -itd --name verifyContract -p 1927:1927 verify:v1
 fi
 
 if [ $1 == "MAIN" ]
@@ -26,5 +26,5 @@ then
 
     docker build -t verify:v1 .
 
-    docker run -env RUNTIME="mainnet" -itd --name verifyContract -p 1927:1927 verify:v1
+    docker run --env RUNTIME="mainnet" -itd --name verifyContract -p 1927:1927 verify:v1
 fi

@@ -560,7 +560,7 @@ func main() {
 
 	fmt.Println("Server start")
 	fmt.Println("YOUR ENV IS " + os.ExpandEnv("${RUNTIME}"))
-	verifyNef("helloword")
+	//verifyNef("helloword")
 	//verifyNef("FTWContract_twotag")
 	//verifyNef("FTWContract_nooptimizetag")
 	//verifyNef("FTWContract_debugtag")
