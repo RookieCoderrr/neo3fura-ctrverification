@@ -33,27 +33,15 @@ RUN  apt-get install -y  python3
 
 RUN apt-get install -y python3-venv
 
-#RUN apt-get install -y python-pip
 
 RUN python3 -m venv venv
-#RUN echo "dash dash/sh boolean false" | debconf-set-selections
-#RUN DEBIAN_FRONTEND=noninteractive dpkg-reconfigure dash
-#
-#RUN source venv/bin/activate
 
-#RUN pip install neo3-boa
+RUN echo "dash dash/sh boolean false" | debconf-set-selections
 
-#RUN git clone https://github.com/CityOfZion/neo3-boa.git
-#
-#RUN pip install wheel
-#
-#RUN pip install -e .
+RUN DEBIAN_FRONTEND=noninteractive dpkg-reconfigure dash
 
-#RUN  chmod 777 a/nccs
-#
-#RUN  chmod 777 c/nccs
-#
-#RUN  chmod 777 b/nccs
+RUN /bin/sh -c 'source venv/bin/activate && pip install neo3-boa'
+
 
 RUN tar -zxvf compiler2.tar.gz
 
