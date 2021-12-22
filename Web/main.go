@@ -150,15 +150,15 @@ func multipleFile(w http.ResponseWriter, r *http.Request) {
 		}
 		//连接数据库
 		ctx := context.TODO()
-		co, _ := intializeMongoOnlineClient(cfg, ctx)
+		co, dbonline := intializeMongoOnlineClient(cfg, ctx)
 		rt := os.ExpandEnv("${RUNTIME}")
 		//查询当前合约是否已经存在于VerifiedContract表中，参数为合约hash，合约更新次数
 		filter := bson.M{"hash": getContract(m1), "updatecounter": getUpdateCounter(m2)}
 		var result *mongo.SingleResult
 		if rt == "mainnet" {
-			result = co.Database("neofura").Collection("VerifyContractModel").FindOne(ctx, filter)
+			result = co.Database(dbonline).Collection("VerifyContractModel").FindOne(ctx, filter)
 		} else {
-			result = co.Database("testneofura").Collection("VerifyContractModel").FindOne(ctx, filter)
+			result = co.Database(dbonline).Collection("VerifyContractModel").FindOne(ctx, filter)
 		}
 
 		//如果合约不存在于VerifiedContract表中，验证成功
@@ -167,10 +167,10 @@ func multipleFile(w http.ResponseWriter, r *http.Request) {
 			verified := insertVerifiedContract{getContract(m1), getId(m2), getUpdateCounter(m2)}
 			var insertOne *mongo.InsertOneResult
 			if rt == "mainnet" {
-				insertOne, err = co.Database("neofura").Collection("VerifyContractModel").InsertOne(ctx, verified)
+				insertOne, err = co.Database(dbonline).Collection("VerifyContractModel").InsertOne(ctx, verified)
 				fmt.Println("Connect to mainnet database")
 			} else {
-				insertOne, err = co.Database("testneofura").Collection("VerifyContractModel").InsertOne(ctx, verified)
+				insertOne, err = co.Database(dbonline).Collection("VerifyContractModel").InsertOne(ctx, verified)
 				fmt.Println("connect to testnet database")
 			}
 
@@ -214,9 +214,9 @@ func multipleFile(w http.ResponseWriter, r *http.Request) {
 					var insertOneSourceCode *mongo.InsertOneResult
 					sourceCode := insertContractSourceCode{getContract(m1), getUpdateCounter(m2), fi.Name(), string(buffer)}
 					if rt == "mainnet" {
-						insertOneSourceCode, err = co.Database("neofura").Collection("ContractSourceCode").InsertOne(ctx, sourceCode)
+						insertOneSourceCode, err = co.Database(dbonline).Collection("ContractSourceCode").InsertOne(ctx, sourceCode)
 					} else {
-						insertOneSourceCode, err = co.Database("testneofura").Collection("ContractSourceCode").InsertOne(ctx, sourceCode)
+						insertOneSourceCode, err = co.Database(dbonline).Collection("ContractSourceCode").InsertOne(ctx, sourceCode)
 					}
 
 					if err != nil {
@@ -247,19 +247,19 @@ func multipleFile(w http.ResponseWriter, r *http.Request) {
 
 		////比较用户上传的源代码编译的.nef文件与链上存储的合约.nef数据是否相等，如果不等的话，返回以下内容
 	} else {
-		fmt.Println(getVersion(m1))
-		if version != getVersion(m1) {
-			fmt.Println("=================Please change your compiler version and try again===============")
-			msg, _ := json.Marshal(jsonResult{7, "Compiler version error, Compiler verison shoud be " + version})
-			w.Header().Set("Content-Type", "application/json")
-			os.RemoveAll(pathFile)
-			w.Write(msg)
-		} else {
-			fmt.Println("=================Your source code doesn't match the contract on bloackchain===============")
-			msg, _ := json.Marshal(jsonResult{8, "Contract Source Code Verification error!"})
-			w.Header().Set("Content-Type", "application/json")
-			w.Write(msg)
-		}
+		fmt.Println(version)
+		//if version != getVersion(m1) {
+		//	fmt.Println("=================Please change your compiler version and try again===============")
+		//	msg, _ := json.Marshal(jsonResult{7, "Compiler version error, Compiler verison shoud be " + version})
+		//	w.Header().Set("Content-Type", "application/json")
+		//	os.RemoveAll(pathFile)
+		//	w.Write(msg)
+		//}
+		fmt.Println("=================Your source code doesn't match the contract on bloackchain===============")
+		msg, _ := json.Marshal(jsonResult{8, "Contract Source Code Verification error!"})
+		w.Header().Set("Content-Type", "application/json")
+		w.Write(msg)
+
 
 	}
 
