@@ -42,7 +42,9 @@ RUN DEBIAN_FRONTEND=noninteractive dpkg-reconfigure dash
 
 RUN /bin/sh -c 'source venv/bin/activate && pip install neo3-boa'
 
-RUN apt-get install -y openjdk-8-jdk
+RUN apt install -y openjdk-11-jre-headless
+
+RUN apt install -y default-jdk
 
 RUN tar -zxvf compiler2.tar.gz
 

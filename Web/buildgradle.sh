@@ -13,6 +13,7 @@ do
     OPTS="$OPTS$element$SLASH"
 done
 OPTS=${OPTS%?}
+OPTS=${OPTS%/*}
 echo $OPTS
 ClassName=${OPTS##*/}
 echo $ClassName
