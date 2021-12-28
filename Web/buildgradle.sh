@@ -1,6 +1,6 @@
 #!/bin/bash
 
-#cd /go/application/javaContractDemo
+cd /go/application/javacontractgradle
 
 sed -i "28c className ="$1"" build.gradle
 
@@ -28,8 +28,8 @@ mkdir -p $Package
 
 cd $Package
 
-#cp /go/application/$2/$ClassName go/appliaction/javaContractDemo/src/main/java/$Pacakge
+cp /go/application/$2/$ClassName go/appliaction/javacontractgradle/src/main/java/$Pacakge
 
-#cd /go/application/javaContractDemo
+cd /go/application/javaContractDemo
 
-#./gradlew neow3jCompile
+./gradlew neow3jCompile
