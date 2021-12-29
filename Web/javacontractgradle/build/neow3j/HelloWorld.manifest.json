@@ -1,0 +1,45 @@
+{
+  "name" : "HelloWorld",
+  "groups" : [ ],
+  "features" : { },
+  "supportedstandards" : [ ],
+  "abi" : {
+    "methods" : [ {
+      "name" : "_deploy",
+      "parameters" : [ {
+        "name" : "data",
+        "type" : "Any"
+      }, {
+        "name" : "update",
+        "type" : "Boolean"
+      } ],
+      "offset" : 0,
+      "returntype" : "Void",
+      "safe" : false
+    }, {
+      "name" : "getOwner",
+      "parameters" : [ ],
+      "offset" : 25,
+      "returntype" : "ByteArray",
+      "safe" : false
+    }, {
+      "name" : "getAString",
+      "parameters" : [ ],
+      "offset" : 40,
+      "returntype" : "String",
+      "safe" : false
+    }, {
+      "name" : "_initialize",
+      "parameters" : [ ],
+      "offset" : 42,
+      "returntype" : "Void",
+      "safe" : false
+    } ],
+    "events" : [ ]
+  },
+  "permissions" : [ ],
+  "trusts" : [ ],
+  "extra" : {
+    "author" : "Your Name"
+  }
+}
