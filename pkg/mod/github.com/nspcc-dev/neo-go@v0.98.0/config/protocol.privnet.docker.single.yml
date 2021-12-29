@@ -1,0 +1,74 @@
+ProtocolConfiguration:
+  Magic: 56753
+  MaxTraceableBlocks: 200000
+  SecondsPerBlock: 1
+  MemPoolSize: 50000
+  StandbyCommittee:
+    - 02b3622bf4017bdfe317c58aed5f4c753f206b7db896046fa7d774bbc4bf7f8dc2
+  ValidatorsCount: 1
+  SeedList:
+    - node_single:20333
+  VerifyBlocks: true
+  VerifyTransactions: true
+  P2PSigExtensions: false
+  NativeActivations:
+    ContractManagement: [0]
+    StdLib: [0]
+    CryptoLib: [0]
+    LedgerContract: [0]
+    NeoToken: [0]
+    GasToken: [0]
+    PolicyContract: [0]
+    RoleManagement: [0]
+    OracleContract: [0]
+
+ApplicationConfiguration:
+  # LogPath could be set up in case you need stdout logs to some proper file.
+  # LogPath: "./log/neogo.log"
+  DBConfiguration:
+    Type: "leveldb" #other options: 'inmemory','boltdb'
+    # DB type options. Uncomment those you need in case you want to switch DB type.
+    LevelDBOptions:
+      DataDirectoryPath: "/chains/single"
+  #    BoltDBOptions:
+  #      FilePath: "./chains/privnet.bolt"
+  #  Uncomment in order to set up custom address for node.
+  #  Address: 127.0.0.1
+  NodePort: 20333
+  Relay: true
+  DialTimeout: 3
+  ProtoTickInterval: 2
+  PingInterval: 30
+  PingTimeout: 90
+  MaxPeers: 10
+  AttemptConnPeers: 5
+  MinPeers: 0
+  Oracle:
+    Enabled: false
+    AllowedContentTypes:
+      - application/json
+    Nodes:
+      - http://node_single:30333
+    RequestTimeout: 5s
+    UnlockWallet:
+      Path: "/wallet1_solo.json"
+      Password: "one"
+  P2PNotary:
+    Enabled: false
+    UnlockWallet:
+      Path: "/notary_wallet.json"
+      Password: "pass"
+  RPC:
+    Enabled: true
+    EnableCORSWorkaround: false
+    MaxGasInvoke: 15
+    Port: 30333
+  Prometheus:
+    Enabled: true
+    Port: 20001
+  Pprof:
+    Enabled: false
+    Port: 20011
+  UnlockWallet:
+    Path: "/wallet1.json"
+    Password: "one"
