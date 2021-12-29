@@ -1,0 +1,124 @@
+{
+  "name" : "FungibleToken",
+  "groups" : [ ],
+  "features" : { },
+  "supportedstandards" : [ "NEP-17" ],
+  "abi" : {
+    "methods" : [ {
+      "name" : "symbol",
+      "parameters" : [ ],
+      "offset" : 0,
+      "returntype" : "String",
+      "safe" : false
+    }, {
+      "name" : "decimals",
+      "parameters" : [ ],
+      "offset" : 6,
+      "returntype" : "Integer",
+      "safe" : false
+    }, {
+      "name" : "totalSupply",
+      "parameters" : [ ],
+      "offset" : 8,
+      "returntype" : "Integer",
+      "safe" : false
+    }, {
+      "name" : "transfer",
+      "parameters" : [ {
+        "name" : "from",
+        "type" : "Hash160"
+      }, {
+        "name" : "to",
+        "type" : "Hash160"
+      }, {
+        "name" : "amount",
+        "type" : "Integer"
+      }, {
+        "name" : "data",
+        "type" : "Array"
+      } ],
+      "offset" : 37,
+      "returntype" : "Boolean",
+      "safe" : false
+    }, {
+      "name" : "balanceOf",
+      "parameters" : [ {
+        "name" : "account",
+        "type" : "Hash160"
+      } ],
+      "offset" : 380,
+      "returntype" : "Integer",
+      "safe" : false
+    }, {
+      "name" : "_deploy",
+      "parameters" : [ {
+        "name" : "data",
+        "type" : "Any"
+      }, {
+        "name" : "update",
+        "type" : "Boolean"
+      } ],
+      "offset" : 445,
+      "returntype" : "Void",
+      "safe" : false
+    }, {
+      "name" : "update",
+      "parameters" : [ {
+        "name" : "script",
+        "type" : "ByteArray"
+      }, {
+        "name" : "manifest",
+        "type" : "String"
+      } ],
+      "offset" : 559,
+      "returntype" : "Void",
+      "safe" : false
+    }, {
+      "name" : "destroy",
+      "parameters" : [ ],
+      "offset" : 646,
+      "returntype" : "Void",
+      "safe" : false
+    }, {
+      "name" : "verify",
+      "parameters" : [ ],
+      "offset" : 655,
+      "returntype" : "Boolean",
+      "safe" : false
+    }, {
+      "name" : "contractOwner",
+      "parameters" : [ ],
+      "offset" : 662,
+      "returntype" : "Hash160",
+      "safe" : false
+    }, {
+      "name" : "_initialize",
+      "parameters" : [ ],
+      "offset" : 871,
+      "returntype" : "Void",
+      "safe" : false
+    } ],
+    "events" : [ {
+      "name" : "Transfer",
+      "parameters" : [ {
+        "name" : "arg1",
+        "type" : "Hash160"
+      }, {
+        "name" : "arg2",
+        "type" : "Hash160"
+      }, {
+        "name" : "arg3",
+        "type" : "Integer"
+      } ]
+    } ]
+  },
+  "permissions" : [ {
+    "contract" : "0xfffdc93764dbaddd97c48f252a53ea4643faa3fd",
+    "methods" : "*"
+  } ],
+  "trusts" : [ ],
+  "extra" : {
+    "author" : "AxLabs",
+    "name" : "FungibleToken"
+  }
+}

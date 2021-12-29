@@ -1,2 +1,2 @@
-org/zilie/HelloWorldSmartContract.java
- org.zilie.HelloWorldSmartContract
+FungibleToken.java
+ io.neow3j.examples.contractdevelopment.contracts.FungibleToken
