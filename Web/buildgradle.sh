@@ -1,6 +1,11 @@
 #!/bin/bash
+cd javacontractgradle/build/neow3j
+rm -f *
+cd ../..
 
+cd javacontractgradle
 rm -f build.gradle
+cd ..
 cp $2/build.gradle javacontractgradle/
 
 #sed -i "28c className ="$1"" build.gradle

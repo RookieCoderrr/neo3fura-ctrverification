@@ -81,7 +81,7 @@ func multipleFile(w http.ResponseWriter, r *http.Request) {
 	//声明一个http数据接收器
 	reader, err := r.MultipartReader()
 	//根据当前时间戳来创建文件夹，用来存放合约作者要上传的合约源文件
-	pathFile := createDateDir("./")
+	pathFile,folderName:= createDateDir("./")
 	if err != nil {
 		fmt.Println("stop here")
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -107,6 +107,8 @@ func multipleFile(w http.ResponseWriter, r *http.Request) {
 				//fmt.Println(m1)
 			} else if part.FormName() == "CompileCommand" {
 				m1[part.FormName()] = string(data)
+			} else if part.FormName() == "JavaPackage"{
+				m1[part.FormName()] =string(data)
 			}
 		} else {
 			//dst,_ :=os.Create("./"+part.FileName()
@@ -122,6 +124,10 @@ func multipleFile(w http.ResponseWriter, r *http.Request) {
 				point := strings.Index(part.FileName(), ".")
 				tmp := part.FileName()[0:point]
 				m1["Filename"] = tmp
+			} else if fileExt == ".java" {
+				point := strings.Index(part.FileName(), ".")
+				tmp := part.FileName()[0:point]
+				m1["Filename"] = tmp
 			}
 
 		}
@@ -129,7 +135,7 @@ func multipleFile(w http.ResponseWriter, r *http.Request) {
 	}
 
 	//编译用户上传的合约源文件，并返回编译后的.nef数据
-	chainNef := execCommand(pathFile, w, m1)
+	chainNef := execCommand(pathFile,folderName, w, m1)
 	//如果编译出错，程序不向下执行
 	if chainNef == "0" || chainNef == "1" || chainNef == "2" {
 		return
@@ -266,7 +272,7 @@ func multipleFile(w http.ResponseWriter, r *http.Request) {
 }
 
 // 根据上传文件的时间戳来命名新生成的文件夹
-func createDateDir(basepath string) string {
+func createDateDir(basepath string) (string,string) {
 	folderName := time.Now().Format("20060102150405")
 	fmt.Println("Create folder " + folderName)
 	folderPath := filepath.Join(basepath, folderName)
@@ -274,19 +280,23 @@ func createDateDir(basepath string) string {
 		os.Mkdir(folderPath, 0777)
 		os.Chmod(folderPath, 0777)
 	}
-	return folderPath
+	return folderPath,folderName
 
 }
 
 //编译用户上传的合约源码
-func execCommand(pathFile string, w http.ResponseWriter, m map[string]string) string {
+func execCommand(pathFile string,folderName string, w http.ResponseWriter, m map[string]string) string {
 	//cmd := exec.Command("ls")
 	//根据用户上传参数选择对应的编译器
 	cmd := exec.Command("echo")
 	if getVersion(m) == "neo3-boa" {
 		cmd = exec.Command("/bin/sh", "-c", "/go/application/pythonExec.sh")
 		fmt.Println("Compiler: neo3-boa, Command: neo3-boa")
-	} else if getVersion(m) == "Neo.Compiler.CSharp 3.0.0" {
+	} else if getVersion(m) == "neow3j"{
+		command:= "/go/application/buildgradle.sh "+ getJavaPackage(m)+" "+folderName
+		cmd = exec.Command("/bin/sh", "-c", command)
+		fmt.Println(command,"Compiler: neow3j, Command:"+"/Users/qinzilie/neo3fura-ctrverification/neo3fura-ctrverification/Web/buildgradle.sh "+getJavaPackage(m)+" "+folderName )
+	}else if getVersion(m) == "Neo.Compiler.CSharp 3.0.0" {
 		if getCompileCommand(m) == "nccs --no-optimize" {
 			cmd = exec.Command("/go/application/c/nccs", "--no-optimize")
 			fmt.Println("Compiler: Neo.Compiler.CSharp 3.0.0, Command: nccs --no-optimize")
@@ -333,7 +343,12 @@ func execCommand(pathFile string, w http.ResponseWriter, m map[string]string) st
 		return "0"
 	}
 
-	cmd.Dir = pathFile + "/"
+	if getVersion(m) != "neow3j" {
+		cmd.Dir = pathFile + "/"
+	}
+	if getVersion(m) == "neow3j" {
+		cmd.Dir = "./"
+	}
 	stdout, err := cmd.StdoutPipe()
 	if err != nil {
 		log.Fatal(err)
@@ -360,7 +375,17 @@ func execCommand(pathFile string, w http.ResponseWriter, m map[string]string) st
 	if getVersion(m) == "neo3-boa" {
 		_, err = os.Lstat(pathFile + "/" + m["Filename"] + ".nef")
 		fmt.Println("here")
-	} else {
+	} else if getVersion(m) == "neow3j"{
+		files,_ := ioutil.ReadDir("./javacontractgradle/build/neow3j/")
+		for _,f := range files {
+			if path.Ext("./"+f.Name())== ".nef" {
+				m["Filename"] = f.Name()
+				break
+			}
+		}
+		_, err = os.Lstat("./javacontractgradle/build/neow3j/"+m["Filename"])
+		fmt.Println("find java nef file")
+	}else {
 		_, err = os.Lstat(pathFile + "/" + "bin/sc/" + m["Filename"] + ".nef")
 		fmt.Println("there")
 	}
@@ -370,6 +395,15 @@ func execCommand(pathFile string, w http.ResponseWriter, m map[string]string) st
 			f, err := ioutil.ReadFile(pathFile + "/" + m["Filename"] + ".nef")
 			if err != nil {
 				log.Fatal(err)
+			}
+			res, err = nef.FileFromBytes(f)
+			if err != nil {
+				log.Fatal("error")
+			}
+		} else if getVersion(m) == "neow3j"{
+			f, err:= ioutil.ReadFile("./javacontractgradle/build/neow3j/"+m["Filename"])
+			if err != nil {
+				log.Fatal("error")
 			}
 			res, err = nef.FileFromBytes(f)
 			if err != nil {
@@ -554,7 +588,9 @@ func getId(m map[string]int) int {
 func getCompileCommand(m map[string]string) string {
 	return m["CompileCommand"]
 }
-
+func getJavaPackage(m map[string]string) string {
+	return m["JavaPackage"]
+}
 //监听127.0.0.1:1926端口
 func main() {
 
