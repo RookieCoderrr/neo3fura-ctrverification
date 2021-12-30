@@ -198,6 +198,11 @@ func multipleFile(w http.ResponseWriter, r *http.Request) {
 						if fileExt != ".py" {
 							continue
 						}
+					} else if getVersion(m1) == "neow3j" {
+						fileExt := path.Ext(fi.Name())
+						if fileExt != ".java" {
+							continue
+						}
 					}
 					fmt.Println(fi.Name())
 					file, err := os.Open(pathFile + "/" + fi.Name())
@@ -409,6 +414,7 @@ func execCommand(pathFile string,folderName string, w http.ResponseWriter, m map
 			if err != nil {
 				log.Fatal("error")
 			}
+
 		} else {
 			f, err := ioutil.ReadFile(pathFile + "/" + "bin/sc/" + m["Filename"] + ".nef")
 			if err != nil {
