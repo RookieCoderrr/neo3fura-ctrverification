@@ -298,9 +298,9 @@ func execCommand(pathFile string,folderName string, w http.ResponseWriter, m map
 		cmd = exec.Command("/bin/sh", "-c", "/go/application/pythonExec.sh")
 		fmt.Println("Compiler: neo3-boa, Command: neo3-boa")
 	} else if getVersion(m) == "neow3j"{
-		command:= "/go/application/buildgradle.sh "+ getJavaPackage(m)+" "+folderName
+		command:= "/go/application/javaExec.sh "+ getJavaPackage(m)+" "+folderName
 		cmd = exec.Command("/bin/sh", "-c", command)
-		fmt.Println(command,"Compiler: neow3j, Command:"+"/Users/qinzilie/neo3fura-ctrverification/neo3fura-ctrverification/Web/buildgradle.sh "+getJavaPackage(m)+" "+folderName )
+		fmt.Println(command,"Compiler: neow3j, Command:"+"/go/application/javaExec.sh "+getJavaPackage(m)+" "+folderName )
 	}else if getVersion(m) == "Neo.Compiler.CSharp 3.0.0" {
 		if getCompileCommand(m) == "nccs --no-optimize" {
 			cmd = exec.Command("/go/application/c/nccs", "--no-optimize")
