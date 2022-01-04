@@ -203,6 +203,11 @@ func multipleFile(w http.ResponseWriter, r *http.Request) {
 						if fileExt != ".java" {
 							continue
 						}
+					} else if getVersion(m1) == "neo-go" {
+						fileExt := path.Ext(fi.Name())
+						if fileExt != ".go" {
+							continue
+						}
 					}
 					fmt.Println(fi.Name())
 					file, err := os.Open(pathFile + "/" + fi.Name())
@@ -301,7 +306,10 @@ func execCommand(pathFile string,folderName string, w http.ResponseWriter, m map
 		command:= "/go/application/javaExec.sh "+ getJavaPackage(m)+" "+folderName
 		cmd = exec.Command("/bin/sh", "-c", command)
 		fmt.Println(command,"Compiler: neow3j, Command:"+"/go/application/javaExec.sh "+getJavaPackage(m)+" "+folderName )
-	}else if getVersion(m) == "Neo.Compiler.CSharp 3.0.0" {
+	} else if getVersion(m) == "neo-go" {
+		cmd = exec.Command("/bin/sh", "-c", "/go/application/goExec.sh")
+		fmt.Println("Compiler: neo-go, Command: neo-go")
+	} else if getVersion(m) == "Neo.Compiler.CSharp 3.0.0" {
 		if getCompileCommand(m) == "nccs --no-optimize" {
 			cmd = exec.Command("/go/application/c/nccs", "--no-optimize")
 			fmt.Println("Compiler: Neo.Compiler.CSharp 3.0.0, Command: nccs --no-optimize")
@@ -379,7 +387,10 @@ func execCommand(pathFile string,folderName string, w http.ResponseWriter, m map
 	}
 	if getVersion(m) == "neo3-boa" {
 		_, err = os.Lstat(pathFile + "/" + m["Filename"] + ".nef")
-		fmt.Println("here")
+		fmt.Println("check python nef")
+	} else if getVersion(m) == "neo-go"{
+		_, err = os.Lstat(pathFile + "/" + "out.nef")
+		fmt.Println("check go nef")
 	} else if getVersion(m) == "neow3j"{
 		files,_ := ioutil.ReadDir("./javacontractgradle/build/neow3j/")
 		for _,f := range files {
@@ -398,6 +409,15 @@ func execCommand(pathFile string,folderName string, w http.ResponseWriter, m map
 		var res nef.File
 		if getVersion(m) == "neo3-boa" {
 			f, err := ioutil.ReadFile(pathFile + "/" + m["Filename"] + ".nef")
+			if err != nil {
+				log.Fatal(err)
+			}
+			res, err = nef.FileFromBytes(f)
+			if err != nil {
+				log.Fatal("error")
+			}
+		}else if getVersion(m) == "neo-go" {
+			f, err := ioutil.ReadFile(pathFile + "/" + "out.nef")
 			if err != nil {
 				log.Fatal(err)
 			}

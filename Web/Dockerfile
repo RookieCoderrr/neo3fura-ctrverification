@@ -56,6 +56,8 @@ RUN chmod +x neo-go-linux-amd64
 
 RUN mv neo-go-linux-amd64 /usr/bin/neo-go
 
+#RUN export GOROOT="/usr/local/go"
+
 RUN  go build -o main main.go
 
 EXPOSE 1927
