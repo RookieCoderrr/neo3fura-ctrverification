@@ -28,3 +28,17 @@ then
 
     docker run --env RUNTIME="mainnet" -itd --name verifyContract_mainnet -p 3027:1927 verify_mainnet:v1
 fi
+
+if [ $1 == "TESTMAGNET" ]
+then
+
+    docker stop verifyContract_testmagnet
+
+    docker container rm verifyContract_testmagnet
+
+    docker rmi verify_testmagnet:v1
+
+    docker build -t verify_testmagnet:v1 .
+
+    docker run --env RUNTIME="testmagnet" -itd --name verifyContract_testmagnet -p 3028:1927 verify_testmagnet:v1
+fi

@@ -9,7 +9,8 @@ import (
 	"github.com/nspcc-dev/neo-go/pkg/smartcontract/nef"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"github.com/rs/cors"
-	"github.com/tidwall/gjson"
+	 
+	
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
@@ -32,6 +33,8 @@ const RPCNODEMAIN = "https://neofura.ngd.network"
 
 const RPCNODETEST = "https://testneofura.ngd.network:444"
 
+const RPCNODETESTMAGNET = "https://testmagnet.ngd.network"
+
 //定义主网和测试往数据库结构
 type Config struct {
 	Database_main struct {
@@ -50,6 +53,14 @@ type Config struct {
 		Database string `yaml:"database"`
 		DBName   string `yaml:"dbname"`
 	} `yaml:"database_test"`
+	Database_testmagnet struct {
+		Host     string `yaml:"host"`
+		Port     string `yaml:"port"`
+		User     string `yaml:"user"`
+		Pass     string `yaml:"pass"`
+		Database string `yaml:"database"`
+		DBName   string `yaml:"dbname"`
+	} `yaml:"database_testmagnet"`
 }
 
 //定义http应答返回格式
@@ -498,7 +509,7 @@ func getContractState(pathFile string, w http.ResponseWriter, m1 map[string]stri
 		},
 		"id": 1,
 	})
-	if rt != "mainnet" && rt != "testnet" {
+	if rt != "mainnet" && rt != "testnet" && rt != "testmagnet" {
 		rt = "mainnet"
 	}
 	fmt.Println("RPC params: ContractHash:" + getContract(m1))
@@ -508,6 +519,9 @@ func getContractState(pathFile string, w http.ResponseWriter, m1 map[string]stri
 		fmt.Println("Runtime is:" + rt)
 	case "testnet":
 		resp, err = http.Post(RPCNODETEST, "application/json", bytes.NewReader(payload))
+		fmt.Println("Runtime is:" + rt)
+	case "testmagnet":
+		resp, err = http.Post(RPCNODETESTMAGNET, "application/json", bytes.NewReader(payload))
 		fmt.Println("Runtime is:" + rt)
 	}
 
@@ -581,7 +595,11 @@ func intializeMongoOnlineClient(cfg Config, ctx context.Context) (*mongo.Client,
 	case "testnet":
 		clientOptions = options.Client().ApplyURI("mongodb://" + cfg.Database_test.User + ":" + cfg.Database_test.Pass + "@" + cfg.Database_test.Host + ":" + cfg.Database_test.Port + "/" + cfg.Database_test.Database)
 		dbOnline = cfg.Database_test.Database
+	case "testmagnet":
+		clientOptions = options.Client().ApplyURI("mongodb://" + cfg.Database_testmagnet.User + ":" + cfg.Database_testmagnet.Pass + "@" + cfg.Database_testmagnet.Host + ":" + cfg.Database_testmagnet.Port + "/" + cfg.Database_testmagnet.Database)
+		dbOnline = cfg.Database_testmagnet.Database
 	}
+
 
 	clientOptions.SetMaxPoolSize(50)
 	co, err := mongo.Connect(ctx, clientOptions)
