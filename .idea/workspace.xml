@@ -4,7 +4,9 @@
     <option name="autoReloadType" value="ALL" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="16bd405e-6b06-4061-8755-66d57efc329e" name="Default Changelist" comment="" />
+    <list default="true" id="16bd405e-6b06-4061-8755-66d57efc329e" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -81,7 +83,8 @@
     <MESSAGE value="bug" />
     <MESSAGE value="add 3.3.0" />
     <MESSAGE value="add2 3.3.0" />
-    <option name="LAST_COMMIT_MESSAGE" value="add2 3.3.0" />
+    <MESSAGE value="update path" />
+    <option name="LAST_COMMIT_MESSAGE" value="update path" />
   </component>
   <component name="VgoProject">
     <integration-enabled>true</integration-enabled>
