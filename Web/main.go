@@ -357,7 +357,16 @@ func execCommand(pathFile string,folderName string, w http.ResponseWriter, m map
 			cmd = exec.Command("/go/application/d/nccs")
 			fmt.Println("Compiler: Neo.Compiler.CSharp 3.1.0, Command: nccs")
 		}
-	} else {
+	}  else if getVersion(m) == "Neo.Compiler.CSharp 3.3.0" {
+		if getCompileCommand(m) == "nccs --no-optimize" {
+			cmd = exec.Command("/go/application/e/net6.0/nccs", "--no-optimize")
+			fmt.Println("Compiler: Neo.Compiler.CSharp 3.3.0, Command: nccs --no-optimize")
+		}
+		if getCompileCommand(m) == "nccs" {
+			cmd = exec.Command("/go/application/e/net6.0/nccs")
+			fmt.Println("Compiler: Neo.Compiler.CSharp 3.3.0, Command: nccs")
+		}
+	}else {
 		fmt.Println("===============Compiler version doesn't exist==============")
 		msg, _ := json.Marshal(jsonResult{0, "Compiler version doesn't exist, please choose Neo.Compiler.CSharp 3.0.0/Neo.Compiler.CSharp 3.0.2/Neo.Compiler.CSharp 3.0.3 version"})
 		w.Header().Set("Content-Type", "application/json")
