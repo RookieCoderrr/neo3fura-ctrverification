@@ -50,6 +50,8 @@ RUN tar -zxvf compiler2.tar.gz
 
 RUN  chmod 777 d/nccs
 
+RUN  chmod 777 e/net6.0/nccs.exe
+
 RUN wget https://github.com/nspcc-dev/neo-go/releases/download/v0.98.0/neo-go-linux-amd64
 
 RUN chmod +x neo-go-linux-amd64
