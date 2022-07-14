@@ -48,9 +48,9 @@ RUN apt install -y default-jdk
 
 RUN tar -zxvf compiler2.tar.gz
 
-RUN  chmod 777 d/net6.0/nccs.exe
+RUN  chmod 777 compiler2/d/net6.0/nccs.exe
 
-RUN  chmod 777 e/net6.0/nccs.exe
+RUN  chmod 777 compiler2/e/net6.0/nccs.exe
 
 RUN wget https://github.com/nspcc-dev/neo-go/releases/download/v0.98.0/neo-go-linux-amd64
 
