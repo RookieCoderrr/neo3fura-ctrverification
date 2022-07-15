@@ -4,7 +4,7 @@
     <option name="autoReloadType" value="ALL" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="16bd405e-6b06-4061-8755-66d57efc329e" name="Default Changelist" comment="">
+    <list default="true" id="16bd405e-6b06-4061-8755-66d57efc329e" name="Default Changelist" comment="update cmd">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Web/go.mod" beforeDir="false" afterPath="$PROJECT_DIR$/Web/go.mod" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Web/go.sum" beforeDir="false" afterPath="$PROJECT_DIR$/Web/go.sum" afterDir="false" />
@@ -87,7 +87,8 @@
     <MESSAGE value="add 3.3.0" />
     <MESSAGE value="add2 3.3.0" />
     <MESSAGE value="update path" />
-    <option name="LAST_COMMIT_MESSAGE" value="update path" />
+    <MESSAGE value="update cmd" />
+    <option name="LAST_COMMIT_MESSAGE" value="update cmd" />
   </component>
   <component name="VgoProject">
     <integration-enabled>true</integration-enabled>

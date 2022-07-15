@@ -350,20 +350,20 @@ func execCommand(pathFile string,folderName string, w http.ResponseWriter, m map
 		}
 	} else if getVersion(m) == "Neo.Compiler.CSharp 3.1.0" {
 		if getCompileCommand(m) == "nccs --no-optimize" {
-			cmd = exec.Command("dotnet /go/application/compiler2/d/net6.0/nccs.dll", "--no-optimize")
+			cmd = exec.Command("dotnet","/go/application/compiler2/d/net6.0/nccs.dll", "--no-optimize")
 			fmt.Println("Compiler: Neo.Compiler.CSharp 3.1.0, Command: nccs --no-optimize")
 		}
 		if getCompileCommand(m) == "nccs" {
-			cmd = exec.Command("dotnet /go/application/compiler2/d/net6.0/nccs.dll")
+			cmd = exec.Command("dotnet","/go/application/compiler2/d/net6.0/nccs.dll")
 			fmt.Println("Compiler: Neo.Compiler.CSharp 3.1.0, Command: nccs")
 		}
 	}  else if getVersion(m) == "Neo.Compiler.CSharp 3.3.0" {
 		if getCompileCommand(m) == "nccs --no-optimize" {
-			cmd = exec.Command("dotnet /go/application/compiler2/e/net6.0/nccs.dll", "--no-optimize")
+			cmd = exec.Command("dotnet","/go/application/compiler2/e/net6.0/nccs.dll", "--no-optimize")
 			fmt.Println("Compiler: Neo.Compiler.CSharp 3.3.0, Command: nccs --no-optimize")
 		}
 		if getCompileCommand(m) == "nccs" {
-			cmd = exec.Command("dotnet /go/application/compiler2/e/net6.0/nccs.dll")
+			cmd = exec.Command("dotnet","/go/application/compiler2/e/net6.0/nccs.dll")
 			fmt.Println("Compiler: Neo.Compiler.CSharp 3.3.0, Command: nccs")
 		}
 	}else {
