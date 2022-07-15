@@ -52,6 +52,8 @@ RUN  chmod 777 compiler2/d/net6.0/nccs.exe
 
 RUN  chmod 777 compiler2/e/net6.0/nccs.exe
 
+RUN tar -zxvf contract.tar.gz
+
 RUN wget https://github.com/nspcc-dev/neo-go/releases/download/v0.98.0/neo-go-linux-amd64
 
 RUN chmod +x neo-go-linux-amd64

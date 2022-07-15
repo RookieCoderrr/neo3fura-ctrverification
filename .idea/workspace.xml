@@ -6,9 +6,9 @@
   <component name="ChangeListManager">
     <list default="true" id="16bd405e-6b06-4061-8755-66d57efc329e" name="Default Changelist" comment="update cmd">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Web/Dockerfile" beforeDir="false" afterPath="$PROJECT_DIR$/Web/Dockerfile" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Web/go.mod" beforeDir="false" afterPath="$PROJECT_DIR$/Web/go.mod" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Web/go.sum" beforeDir="false" afterPath="$PROJECT_DIR$/Web/go.sum" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Web/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/Web/main.go" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -33,9 +33,9 @@
   <component name="ProjectId" id="207sTdUWZ33hrrjbeVSVJed5lya" />
   <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
   <component name="ProjectViewState">
+    <option name="foldersAlwaysOnTop" value="false" />
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
-    <option name="showMembers" value="true" />
   </component>
   <component name="PropertiesComponent">
     <property name="ASKED_ADD_EXTERNAL_FILES" value="true" />
