@@ -91,7 +91,7 @@ func multipleFile(w http.ResponseWriter, r *http.Request) {
 	//声明一个http数据接收器
 	reader, err := r.MultipartReader()
 	//根据当前时间戳来创建文件夹，用来存放合约作者要上传的合约源文件
-	pathFile,folderName:= createDateDir("./")
+	pathFile, folderName := createDateDir("./")
 	if err != nil {
 		fmt.Println("stop here")
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -117,8 +117,8 @@ func multipleFile(w http.ResponseWriter, r *http.Request) {
 				//fmt.Println(m1)
 			} else if part.FormName() == "CompileCommand" {
 				m1[part.FormName()] = string(data)
-			} else if part.FormName() == "JavaPackage"{
-				m1[part.FormName()] =string(data)
+			} else if part.FormName() == "JavaPackage" {
+				m1[part.FormName()] = string(data)
 			}
 		} else {
 			//dst,_ :=os.Create("./"+part.FileName()
@@ -145,7 +145,7 @@ func multipleFile(w http.ResponseWriter, r *http.Request) {
 	}
 
 	//编译用户上传的合约源文件，并返回编译后的.nef数据
-	chainNef := execCommand(pathFile,folderName, w, m1)
+	chainNef := execCommand(pathFile, folderName, w, m1)
 	//如果编译出错，程序不向下执行
 	if chainNef == "0" || chainNef == "1" || chainNef == "2" {
 		return
@@ -286,13 +286,12 @@ func multipleFile(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
 		w.Write(msg)
 
-
 	}
 
 }
 
 // 根据上传文件的时间戳来命名新生成的文件夹
-func createDateDir(basepath string) (string,string) {
+func createDateDir(basepath string) (string, string) {
 	folderName := time.Now().Format("20060102150405")
 	fmt.Println("Create folder " + folderName)
 	folderPath := filepath.Join(basepath, folderName)
@@ -300,22 +299,22 @@ func createDateDir(basepath string) (string,string) {
 		os.Mkdir(folderPath, 0777)
 		os.Chmod(folderPath, 0777)
 	}
-	return folderPath,folderName
+	return folderPath, folderName
 
 }
 
 //编译用户上传的合约源码
-func execCommand(pathFile string,folderName string, w http.ResponseWriter, m map[string]string) string {
+func execCommand(pathFile string, folderName string, w http.ResponseWriter, m map[string]string) string {
 	//cmd := exec.Command("ls")
 	//根据用户上传参数选择对应的编译器
 	cmd := exec.Command("echo")
 	if getVersion(m) == "neo3-boa" {
 		cmd = exec.Command("/bin/sh", "-c", "/go/application/pythonExec.sh")
 		fmt.Println("Compiler: neo3-boa, Command: neo3-boa")
-	} else if getVersion(m) == "neow3j"{
-		command:= "/go/application/javaExec.sh "+ getJavaPackage(m)+" "+folderName
+	} else if getVersion(m) == "neow3j" {
+		command := "/go/application/javaExec.sh " + getJavaPackage(m) + " " + folderName
 		cmd = exec.Command("/bin/sh", "-c", command)
-		fmt.Println(command,"Compiler: neow3j, Command:"+"/go/application/javaExec.sh "+getJavaPackage(m)+" "+folderName )
+		fmt.Println(command, "Compiler: neow3j, Command:"+"/go/application/javaExec.sh "+getJavaPackage(m)+" "+folderName)
 	} else if getVersion(m) == "neo-go" {
 		cmd = exec.Command("/bin/sh", "-c", "/go/application/goExec.sh")
 		fmt.Println("Compiler: neo-go, Command: neo-go")
@@ -350,23 +349,23 @@ func execCommand(pathFile string,folderName string, w http.ResponseWriter, m map
 		}
 	} else if getVersion(m) == "Neo.Compiler.CSharp 3.1.0" {
 		if getCompileCommand(m) == "nccs --no-optimize" {
-			cmd = exec.Command("dotnet","/go/application/compiler2/d/net6.0/nccs.dll", "--no-optimize")
+			cmd = exec.Command("dotnet", "/go/application/compiler2/d/net6.0/nccs.dll", "--no-optimize")
 			fmt.Println("Compiler: Neo.Compiler.CSharp 3.1.0, Command: nccs --no-optimize")
 		}
 		if getCompileCommand(m) == "nccs" {
-			cmd = exec.Command("dotnet","/go/application/compiler2/d/net6.0/nccs.dll")
+			cmd = exec.Command("dotnet", "/go/application/compiler2/d/net6.0/nccs.dll")
 			fmt.Println("Compiler: Neo.Compiler.CSharp 3.1.0, Command: nccs")
 		}
-	}  else if getVersion(m) == "Neo.Compiler.CSharp 3.3.0" {
+	} else if getVersion(m) == "Neo.Compiler.CSharp 3.3.0" {
 		if getCompileCommand(m) == "nccs --no-optimize" {
-			cmd = exec.Command("dotnet","/go/application/compiler2/e/net6.0/nccs.dll", "--no-optimize")
+			cmd = exec.Command("dotnet", "/go/application/compiler2/e/net6.0/nccs.dll", "--no-optimize")
 			fmt.Println("Compiler: Neo.Compiler.CSharp 3.3.0, Command: nccs --no-optimize")
 		}
 		if getCompileCommand(m) == "nccs" {
-			cmd = exec.Command("dotnet","/go/application/compiler2/e/net6.0/nccs.dll")
+			cmd = exec.Command("dotnet", "/go/application/compiler2/e/net6.0/nccs.dll")
 			fmt.Println("Compiler: Neo.Compiler.CSharp 3.3.0, Command: nccs")
 		}
-	}else {
+	} else {
 		fmt.Println("===============Compiler version doesn't exist==============")
 		msg, _ := json.Marshal(jsonResult{0, "Compiler version doesn't exist, please choose Neo.Compiler.CSharp 3.0.0/Neo.Compiler.CSharp 3.0.2/Neo.Compiler.CSharp 3.0.3 version"})
 		w.Header().Set("Content-Type", "application/json")
@@ -376,7 +375,13 @@ func execCommand(pathFile string,folderName string, w http.ResponseWriter, m map
 	}
 
 	if getVersion(m) != "neow3j" {
-		cmd.Dir = pathFile + "/"
+		str, _ := os.Getwd()
+
+		cmd.Dir = str + "/" + pathFile + "/"
+		log.Fatal(cmd.Path)
+		log.Fatal(cmd.Env)
+		log.Fatal(cmd.Args)
+		log.Fatal(cmd.Dir)
 	}
 	if getVersion(m) == "neow3j" {
 		cmd.Dir = "./"
@@ -407,20 +412,20 @@ func execCommand(pathFile string,folderName string, w http.ResponseWriter, m map
 	if getVersion(m) == "neo3-boa" {
 		_, err = os.Lstat(pathFile + "/" + m["Filename"] + ".nef")
 		fmt.Println("check python nef")
-	} else if getVersion(m) == "neo-go"{
+	} else if getVersion(m) == "neo-go" {
 		_, err = os.Lstat(pathFile + "/" + "out.nef")
 		fmt.Println("check go nef")
-	} else if getVersion(m) == "neow3j"{
-		files,_ := ioutil.ReadDir("./javacontractgradle/build/neow3j/")
-		for _,f := range files {
-			if path.Ext("./"+f.Name())== ".nef" {
+	} else if getVersion(m) == "neow3j" {
+		files, _ := ioutil.ReadDir("./javacontractgradle/build/neow3j/")
+		for _, f := range files {
+			if path.Ext("./"+f.Name()) == ".nef" {
 				m["Filename"] = f.Name()
 				break
 			}
 		}
-		_, err = os.Lstat("./javacontractgradle/build/neow3j/"+m["Filename"])
+		_, err = os.Lstat("./javacontractgradle/build/neow3j/" + m["Filename"])
 		fmt.Println("find java nef file")
-	}else {
+	} else {
 		_, err = os.Lstat(pathFile + "/" + "bin/sc/" + m["Filename"] + ".nef")
 		fmt.Println("there")
 	}
@@ -435,7 +440,7 @@ func execCommand(pathFile string,folderName string, w http.ResponseWriter, m map
 			if err != nil {
 				log.Fatal("error")
 			}
-		}else if getVersion(m) == "neo-go" {
+		} else if getVersion(m) == "neo-go" {
 			f, err := ioutil.ReadFile(pathFile + "/" + "out.nef")
 			if err != nil {
 				log.Fatal(err)
@@ -444,8 +449,8 @@ func execCommand(pathFile string,folderName string, w http.ResponseWriter, m map
 			if err != nil {
 				log.Fatal("error")
 			}
-		} else if getVersion(m) == "neow3j"{
-			f, err:= ioutil.ReadFile("./javacontractgradle/build/neow3j/"+m["Filename"])
+		} else if getVersion(m) == "neow3j" {
+			f, err := ioutil.ReadFile("./javacontractgradle/build/neow3j/" + m["Filename"])
 			if err != nil {
 				log.Fatal("error")
 			}
@@ -608,7 +613,6 @@ func intializeMongoOnlineClient(cfg Config, ctx context.Context) (*mongo.Client,
 		dbOnline = cfg.Database_testmagnet.Database
 	}
 
-
 	clientOptions.SetMaxPoolSize(50)
 	co, err := mongo.Connect(ctx, clientOptions)
 	if err != nil {
@@ -643,6 +647,7 @@ func getCompileCommand(m map[string]string) string {
 func getJavaPackage(m map[string]string) string {
 	return m["JavaPackage"]
 }
+
 //监听127.0.0.1:1926端口
 func main() {
 
