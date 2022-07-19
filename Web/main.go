@@ -396,19 +396,6 @@ func execCommand(pathFile string, folderName string, w http.ResponseWriter, m ma
 	if err != nil {
 		log.Fatalf("cmd.Run() failed with %sn", err)
 	}
-	//cmd2:=exec.Command("chmod","-R","777",cmd.Dir)
-	//err :=cmd2.Run()
-	//if err !=nil {
-	//	log.Fatal(err)
-	//}
-
-
-	//out,err:=cmd.CombinedOutput()
-	//if err != nil{
-	//	a:=string(out)
-	//	fmt.Println(a)
-	//	//log.Fatal(a)
-	//}
 
 
 	stdout, err := cmd.StdoutPipe()
