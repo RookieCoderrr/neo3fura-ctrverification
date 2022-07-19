@@ -380,23 +380,12 @@ func execCommand(pathFile string, folderName string, w http.ResponseWriter, m ma
 		return "0"
 	}
 
-
-	cmd2 := exec.Command("/bin/sh", "-c", "/go/application/contractExec.sh")
-
 	if getVersion(m) != "neow3j" {
 		cmd.Dir = pathFile + "/"
-		cmd2.Dir = pathFile + "/"
 	}
 	if getVersion(m) == "neow3j" {
 		cmd.Dir = "./"
 	}
-
-
-	err := cmd2.Run()
-	if err != nil {
-		log.Fatalf("cmd.Run() failed with %sn", err)
-	}
-
 
 	stdout, err := cmd.StdoutPipe()
 	if err != nil {
