@@ -176,7 +176,7 @@ func multipleFile(w http.ResponseWriter, r *http.Request) {
 		} else {
 			result = co.Database(dbonline).Collection("VerifyContractModel").FindOne(ctx, filter)
 		}
-
+		fmt.Println(result.Err())
 		//如果合约不存在于VerifiedContract表中，验证成功
 		if result.Err() != nil {
 			//在VerifyContract表中插入该合约信息
@@ -620,6 +620,9 @@ func intializeMongoOnlineClient(cfg Config, ctx context.Context) (*mongo.Client,
 		log.Fatal("ping mongo error")
 	}
 	fmt.Println("Connect mongodb success")
+
+	fmt.Println(dbOnline)
+
 	return co, dbOnline
 }
 
