@@ -182,10 +182,13 @@ func multipleFile(w http.ResponseWriter, r *http.Request) {
 			//在VerifyContract表中插入该合约信息
 			verified := insertVerifiedContract{getContract(m1), getId(m2), getUpdateCounter(m2)}
 			var insertOne *mongo.InsertOneResult
-
-			insertOne, err = co.Database(dbonline).Collection("VerifyContractModel").InsertOne(ctx, verified)
-			fmt.Println("Connect to " +dbonline)
-
+			if rt == "mainnet" {
+				insertOne, err = co.Database(dbonline).Collection("VerifyContractModel").InsertOne(ctx, verified)
+				fmt.Println("Connect to mainnet database")
+			} else {
+				insertOne, err = co.Database(dbonline).Collection("VerifyContractModel").InsertOne(ctx, verified)
+				fmt.Println("connect to testnet database")
+			}
 
 			if err != nil {
 				log.Fatal(err)
@@ -231,10 +234,16 @@ func multipleFile(w http.ResponseWriter, r *http.Request) {
 					_, err = file.Read(buffer)
 					if err != nil {
 						log.Fatal(err)
+
 					}
+
 					var insertOneSourceCode *mongo.InsertOneResult
 					sourceCode := insertContractSourceCode{getContract(m1), getUpdateCounter(m2), fi.Name(), string(buffer)}
-					insertOneSourceCode, err = co.Database(dbonline).Collection("ContractSourceCode").InsertOne(ctx, sourceCode)
+					if rt == "mainnet" {
+						insertOneSourceCode, err = co.Database(dbonline).Collection("ContractSourceCode").InsertOne(ctx, sourceCode)
+					} else {
+						insertOneSourceCode, err = co.Database(dbonline).Collection("ContractSourceCode").InsertOne(ctx, sourceCode)
+					}
 
 					if err != nil {
 						log.Fatal(err)
@@ -586,7 +595,7 @@ func intializeMongoOnlineClient(cfg Config, ctx context.Context) (*mongo.Client,
 	rt := os.ExpandEnv("${RUNTIME}")
 	var clientOptions *options.ClientOptions
 	var dbOnline string
-	if rt != "mainnet" && rt != "testnet" && rt != "testmagnet"{
+	if rt != "mainnet" && rt != "testnet" {
 		rt = "mainnet"
 	}
 	switch rt {
