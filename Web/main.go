@@ -375,17 +375,14 @@ func execCommand(pathFile string, folderName string, w http.ResponseWriter, m ma
 	}
 
 	if getVersion(m) != "neow3j" {
-		str, _ := os.Getwd()
-
-		cmd.Dir = str + "/" + pathFile + "/"
-		log.Fatal(cmd.Path)
-		log.Fatal(cmd.Env)
-		log.Fatal(cmd.Args)
-		log.Fatal(cmd.Dir)
+ 
+		cmd.Dir = pathFile + "/"
+ 
 	}
 	if getVersion(m) == "neow3j" {
 		cmd.Dir = "./"
 	}
+
 	stdout, err := cmd.StdoutPipe()
 	if err != nil {
 		log.Fatal(err)
