@@ -171,25 +171,16 @@ func multipleFile(w http.ResponseWriter, r *http.Request) {
 		//查询当前合约是否已经存在于VerifiedContract表中，参数为合约hash，合约更新次数
 		filter := bson.M{"hash": getContract(m1), "updatecounter": getUpdateCounter(m2)}
 		var result *mongo.SingleResult
-		if rt == "mainnet" {
-			result = co.Database(dbonline).Collection("VerifyContractModel").FindOne(ctx, filter)
-		} else {
-			result = co.Database(dbonline).Collection("VerifyContractModel").FindOne(ctx, filter)
-		}
-		fmt.Println(result.Err())
+		result = co.Database(dbonline).Collection("VerifyContractModel").FindOne(ctx, filter)
+
 		//如果合约不存在于VerifiedContract表中，验证成功
 		if result.Err() != nil {
 			//在VerifyContract表中插入该合约信息
 			verified := insertVerifiedContract{getContract(m1), getId(m2), getUpdateCounter(m2)}
 			var insertOne *mongo.InsertOneResult
-			if rt == "mainnet" {
-				insertOne, err = co.Database(dbonline).Collection("VerifyContractModel").InsertOne(ctx, verified)
-				fmt.Println("Connect to mainnet database")
-			} else {
-				insertOne, err = co.Database(dbonline).Collection("VerifyContractModel").InsertOne(ctx, verified)
-				fmt.Println("connect to testnet database")
-			}
-
+			insertOne, err = co.Database(dbonline).Collection("VerifyContractModel").InsertOne(ctx, verified)
+			fmt.Println("Connect to mainnet database")
+			
 			if err != nil {
 				log.Fatal(err)
 			}
@@ -250,9 +241,6 @@ func multipleFile(w http.ResponseWriter, r *http.Request) {
 					}
 					fmt.Println("Inserted a contract source code in contractSourceCode collection in "+rt+"database", insertOneSourceCode.InsertedID)
 
-					//fmt.Println(" registed buffer",buffer)
-					//fmt.Println("bytes read :",bytesread)
-					//fmt.Println("bytestream to string", string(buffer))
 				}
 			}
 			fmt.Println("=================Insert verified contract in database===============")
@@ -274,13 +262,6 @@ func multipleFile(w http.ResponseWriter, r *http.Request) {
 		////比较用户上传的源代码编译的.nef文件与链上存储的合约.nef数据是否相等，如果不等的话，返回以下内容
 	} else {
 		fmt.Println(version)
-		//if version != getVersion(m1) {
-		//	fmt.Println("=================Please change your compiler version and try again===============")
-		//	msg, _ := json.Marshal(jsonResult{7, "Compiler version error, Compiler verison shoud be " + version})
-		//	w.Header().Set("Content-Type", "application/json")
-		//	os.RemoveAll(pathFile)
-		//	w.Write(msg)
-		//}
 		fmt.Println("=================Your source code doesn't match the contract on bloackchain===============")
 		msg, _ := json.Marshal(jsonResult{8, "Contract Source Code Verification error!"})
 		w.Header().Set("Content-Type", "application/json")
@@ -483,11 +464,7 @@ func execCommand(pathFile string, folderName string, w http.ResponseWriter, m ma
 		return "2"
 
 	}
-	//	fmt.Println(res.Magic)
-	//	fmt.Println(res.Compiler)
-	//	fmt.Println(res.Header)
-	//	fmt.Println(res.Tokens)
-	//	fmt.Println(res.Script)
+
 }
 func verifyNef(name string) string {
 	f, err := ioutil.ReadFile("./" + name + ".nef")
@@ -544,13 +521,9 @@ func getContractState(pathFile string, w http.ResponseWriter, m1 map[string]stri
 		return "", "3"
 	}
 	defer resp.Body.Close()
-	//fmt.Println("response Status:", resp.Status)
-	//
-	//fmt.Println("response Headers:", resp.Header)
 
 	body, _ := ioutil.ReadAll(resp.Body)
 
-	//fmt.Println("response Body:", string(body))
 	if gjson.Get(string(body), "error").Exists() {
 		message := gjson.Get(string(body), "error.message").String()
 		fmt.Println("=================" + message + "===============")
@@ -595,7 +568,7 @@ func intializeMongoOnlineClient(cfg Config, ctx context.Context) (*mongo.Client,
 	rt := os.ExpandEnv("${RUNTIME}")
 	var clientOptions *options.ClientOptions
 	var dbOnline string
-	if rt != "mainnet" && rt != "testnet" {
+	if rt != "mainnet" && rt != "testnet" && rt != "testmagnet"{
 		rt = "mainnet"
 	}
 	switch rt {
