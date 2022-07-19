@@ -4,12 +4,8 @@
     <option name="autoReloadType" value="ALL" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="16bd405e-6b06-4061-8755-66d57efc329e" name="Default Changelist" comment="update cmd">
-      <change afterPath="$PROJECT_DIR$/Web/contractExec.sh" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Web/Start.sh" beforeDir="false" afterPath="$PROJECT_DIR$/Web/Start.sh" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Web/go.mod" beforeDir="false" afterPath="$PROJECT_DIR$/Web/go.mod" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Web/go.sum" beforeDir="false" afterPath="$PROJECT_DIR$/Web/go.sum" afterDir="false" />
+    <list default="true" id="c1f00966-36fe-4210-afa6-c40dc9460b27" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/Web/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/Web/main.go" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
