@@ -158,7 +158,6 @@ func multipleFile(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	//比较用户上传的源代码编译的.nef文件与链上存储的合约.nef数据是否相等，如果相等的话，向数据库插入数据
-
 	if sourceNef == chainNef {
 		//打开数据库配置文件
 		cfg, err := OpenConfigFile()
@@ -168,21 +167,16 @@ func multipleFile(w http.ResponseWriter, r *http.Request) {
 		//连接数据库
 		ctx := context.TODO()
 		co, dbonline := intializeMongoOnlineClient(cfg, ctx)
-
-        fmt.Println("++++++++++++++database+++++++++++")
-		fmt.Println(dbonline)
 		rt := os.ExpandEnv("${RUNTIME}")
 		//查询当前合约是否已经存在于VerifiedContract表中，参数为合约hash，合约更新次数
 		filter := bson.M{"hash": getContract(m1), "updatecounter": getUpdateCounter(m2)}
 		var result *mongo.SingleResult
 		if rt == "mainnet" {
 			result = co.Database(dbonline).Collection("VerifyContractModel").FindOne(ctx, filter)
-		} else if rt == ""{
+		} else {
 			result = co.Database(dbonline).Collection("VerifyContractModel").FindOne(ctx, filter)
-		}else if rt == ""{
-
 		}
-		log.Fatal()
+
 		//如果合约不存在于VerifiedContract表中，验证成功
 		if result.Err() != nil {
 			//在VerifyContract表中插入该合约信息
@@ -368,7 +362,7 @@ func execCommand(pathFile string, folderName string, w http.ResponseWriter, m ma
 			fmt.Println("Compiler: Neo.Compiler.CSharp 3.3.0, Command: nccs --no-optimize")
 		}
 		if getCompileCommand(m) == "nccs" {
-			cmd = exec.Command("dotnet", "../compiler2/e/net6.0/nccs.dll")
+			cmd = exec.Command("dotnet", "/go/application/compiler2/e/net6.0/nccs.dll")
 			fmt.Println("Compiler: Neo.Compiler.CSharp 3.3.0, Command: nccs")
 		}
 	} else {
@@ -380,37 +374,18 @@ func execCommand(pathFile string, folderName string, w http.ResponseWriter, m ma
 		return "0"
 	}
 
-
-	cmd2 := exec.Command("/bin/sh", "-c", "/go/application/contractExec.sh")
-
 	if getVersion(m) != "neow3j" {
-		cmd.Dir = pathFile + "/"
-		cmd2.Dir = pathFile + "/"
+		str, _ := os.Getwd()
+
+		cmd.Dir = str + "/" + pathFile + "/"
+		log.Fatal(cmd.Path)
+		log.Fatal(cmd.Env)
+		log.Fatal(cmd.Args)
+		log.Fatal(cmd.Dir)
 	}
 	if getVersion(m) == "neow3j" {
 		cmd.Dir = "./"
 	}
-
-
-	err := cmd2.Run()
-	if err != nil {
-		log.Fatalf("cmd.Run() failed with %sn", err)
-	}
-	//cmd2:=exec.Command("chmod","-R","777",cmd.Dir)
-	//err :=cmd2.Run()
-	//if err !=nil {
-	//	log.Fatal(err)
-	//}
-
-
-	//out,err:=cmd.CombinedOutput()
-	//if err != nil{
-	//	a:=string(out)
-	//	fmt.Println(a)
-	//	//log.Fatal(a)
-	//}
-
-
 	stdout, err := cmd.StdoutPipe()
 	if err != nil {
 		log.Fatal(err)
