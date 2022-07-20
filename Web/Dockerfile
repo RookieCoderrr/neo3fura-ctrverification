@@ -124,27 +124,7 @@ RUN DEBIAN_FRONTEND=noninteractive dpkg-reconfigure dash
 RUN /bin/sh -c 'source venv070/bin/activate && pip install neo3-boa==0.7.0'
 #RUN /bin/sh -c 'source venv070/bin/deactivate'
 
-##neo3-boa 0.3.0
-RUN python3 -m venv venv030
-RUN echo "dash dash/sh boolean false" | debconf-set-selections
-RUN DEBIAN_FRONTEND=noninteractive dpkg-reconfigure dash
-RUN /bin/sh -c 'source venv030/bin/activate && pip install neo3-boa==0.3.0'
-#RUN /bin/sh -c 'source venv030/bin/deactivate'
 
-##neo3-boa 0.0.3
-RUN python3 -m venv venv003
-RUN echo "dash dash/sh boolean false" | debconf-set-selections
-RUN DEBIAN_FRONTEND=noninteractive dpkg-reconfigure dash
-RUN deactivate
-RUN /bin/sh -c 'source venv003/bin/activate && pip install neo3-boa==0.0.3'
-#RUN /bin/sh -c 'source venv003/bin/deactivate'
-
-##neo3-boa 0.0.0
-RUN python3 -m venv venv000
-RUN echo "dash dash/sh boolean false" | debconf-set-selections
-RUN DEBIAN_FRONTEND=noninteractive dpkg-reconfigure dash
-RUN /bin/sh -c 'source venv000/bin/activate && pip install neo3-boa==0.0.0'
-#RUN /bin/sh -c 'source venv000/bin/deactivate'
 
 RUN apt install -y openjdk-11-jre-headless
 
