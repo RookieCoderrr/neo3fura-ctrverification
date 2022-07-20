@@ -92,26 +92,7 @@ then
  # source /go/application/venv083/bin/deactivate
 fi
 
-if [ $1 == "boa030" ]
-then
-  source /go/application/venv030/bin/activate
-  neo3-boa *.py
- # source /go/application/venv030/bin/deactivate
-fi
 
-if [ $1 == "boa003" ]
-then
-  source /go/application/venv003/bin/activate
-  neo3-boa *.py
- # source /go/application/venv003/bin/deactivate
-fi
-
-if [ $1 == "boa000" ]
-then
-  source /go/application/venv000/bin/activate
-  neo3-boa *.py
- # source /go/application/venv000/bin/deactivate
-fi
 
 
 
