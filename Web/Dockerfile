@@ -33,14 +33,119 @@ RUN  apt-get install -y  python3
 
 RUN apt-get install -y python3-venv
 
-
-RUN python3 -m venv venv
-
+##neo3-boa 0.11.3
+RUN deactivate
+RUN python3 -m venv boa113
 RUN echo "dash dash/sh boolean false" | debconf-set-selections
+RUN DEBIAN_FRONTEND=noninteractive dpkg-reconfigure dash
+RUN /bin/sh -c 'source venv113/bin/activate && pip install neo3-boa=0.11.3'
 
+##neo3-boa 0.11.2
+RUN deactivate
+RUN python3 -m venv venv112
+RUN echo "dash dash/sh boolean false" | debconf-set-selections
+RUN DEBIAN_FRONTEND=noninteractive dpkg-reconfigure dash
+RUN /bin/sh -c 'source venv112/bin/activate && pip install neo3-boa=0.11.2'
+
+##neo3-boa 0.11.1
+RUN deactivate
+RUN python3 -m venv venv111
+RUN echo "dash dash/sh boolean false" | debconf-set-selections
+RUN DEBIAN_FRONTEND=noninteractive dpkg-reconfigure dash
+RUN /bin/sh -c 'source venv111/bin/activate && pip install neo3-boa=0.11.1'
+
+##neo3-boa 0.11.0
+RUN deactivate
+RUN python3 -m venv venv110
+RUN echo "dash dash/sh boolean false" | debconf-set-selections
+RUN DEBIAN_FRONTEND=noninteractive dpkg-reconfigure dash
+RUN /bin/sh -c 'source venv110/bin/activate && pip install neo3-boa=0.11.0'
+
+##neo3-boa 0.10.1
+RUN deactivate
+RUN python3 -m venv venv101
+RUN echo "dash dash/sh boolean false" | debconf-set-selections
+RUN DEBIAN_FRONTEND=noninteractive dpkg-reconfigure dash
+RUN /bin/sh -c 'source venv101/bin/activate && pip install neo3-boa=0.10.1'
+
+##neo3-boa 0.10.0
+RUN deactivate
+RUN python3 -m venv venv100
+RUN echo "dash dash/sh boolean false" | debconf-set-selections
+RUN DEBIAN_FRONTEND=noninteractive dpkg-reconfigure dash
+RUN /bin/sh -c 'source venv100/bin/activate && pip install neo3-boa=0.10.0'
+
+##neo3-boa 0.9.0
+RUN deactivate
+RUN python3 -m venv venv090
+RUN echo "dash dash/sh boolean false" | debconf-set-selections
+RUN DEBIAN_FRONTEND=noninteractive dpkg-reconfigure dash
+RUN /bin/sh -c 'source venv090/bin/activate && pip install neo3-boa=0.9.0'
+
+##neo3-boa 0.8.3
+RUN deactivate
+RUN python3 -m venv venv083
+RUN echo "dash dash/sh boolean false" | debconf-set-selections
+RUN DEBIAN_FRONTEND=noninteractive dpkg-reconfigure dash
+RUN /bin/sh -c 'source venv083/bin/activate && pip install neo3-boa=0.8.3'
+
+##neo3-boa 0.8.2
+RUN deactivate
+RUN python3 -m venv venv082
+RUN echo "dash dash/sh boolean false" | debconf-set-selections
+RUN DEBIAN_FRONTEND=noninteractive dpkg-reconfigure dash
+RUN /bin/sh -c 'source venv082/bin/activate && pip install neo3-boa=0.8.2'
+
+##neo3-boa 0.8.1
+RUN deactivate
+RUN python3 -m venv venv081
+RUN echo "dash dash/sh boolean false" | debconf-set-selections
+RUN DEBIAN_FRONTEND=noninteractive dpkg-reconfigure dash
+RUN /bin/sh -c 'source venv081/bin/activate && pip install neo3-boa=0.8.1'
+
+##neo3-boa 0.8.0
+RUN deactivate
+RUN python3 -m venv venv080
+RUN echo "dash dash/sh boolean false" | debconf-set-selections
+RUN DEBIAN_FRONTEND=noninteractive dpkg-reconfigure dash
+RUN /bin/sh -c 'source venv080/bin/activate && pip install neo3-boa=0.8.0'
+
+##neo3-boa 0.7.1
+RUN deactivate
+RUN python3 -m venv venv071
+RUN echo "dash dash/sh boolean false" | debconf-set-selections
+RUN DEBIAN_FRONTEND=noninteractive dpkg-reconfigure dash
+RUN /bin/sh -c 'source venv071/bin/activate && pip install neo3-boa=0.7.1'
+
+##neo3-boa 0.7.0
+RUN deactivate
+RUN python3 -m venv venv070
+RUN echo "dash dash/sh boolean false" | debconf-set-selections
+RUN DEBIAN_FRONTEND=noninteractive dpkg-reconfigure dash
+RUN /bin/sh -c 'source venv070/bin/activate && pip install neo3-boa=0.7.0'
+
+##neo3-boa 0.3.0
+RUN deactivate
+RUN python3 -m venv venv030
+RUN echo "dash dash/sh boolean false" | debconf-set-selections
 RUN DEBIAN_FRONTEND=noninteractive dpkg-reconfigure dash
 
-RUN /bin/sh -c 'source venv/bin/activate && pip install neo3-boa'
+RUN /bin/sh -c 'source venv030/bin/activate && pip install neo3-boa=0.3.0'
+
+##neo3-boa 0.0.3
+RUN deactivate
+RUN python3 -m venv venv003
+RUN echo "dash dash/sh boolean false" | debconf-set-selections
+RUN DEBIAN_FRONTEND=noninteractive dpkg-reconfigure dash
+RUN deactivate
+RUN /bin/sh -c 'source venv003/bin/activate && pip install neo3-boa=0.0.3'
+
+##neo3-boa 0.0.0
+RUN deactivate
+RUN python3 -m venv venv000
+RUN echo "dash dash/sh boolean false" | debconf-set-selections
+RUN DEBIAN_FRONTEND=noninteractive dpkg-reconfigure dash
+RUN /bin/sh -c 'source venv000/bin/activate && pip install neo3-boa=0.0.0'
 
 RUN apt install -y openjdk-11-jre-headless
 
