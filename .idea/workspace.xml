@@ -6,8 +6,6 @@
   <component name="ChangeListManager">
     <list default="true" id="c1f00966-36fe-4210-afa6-c40dc9460b27" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Web/Dockerfile" beforeDir="false" afterPath="$PROJECT_DIR$/Web/Dockerfile" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Web/pythonExec.sh" beforeDir="false" afterPath="$PROJECT_DIR$/Web/pythonExec.sh" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -92,7 +90,8 @@
     <MESSAGE value="update cmd" />
     <MESSAGE value="update main" />
     <MESSAGE value="update pythonCompiler" />
-    <option name="LAST_COMMIT_MESSAGE" value="update pythonCompiler" />
+    <MESSAGE value="update2 pythonCompiler" />
+    <option name="LAST_COMMIT_MESSAGE" value="update2 pythonCompiler" />
   </component>
   <component name="VgoProject">
     <integration-enabled>true</integration-enabled>
