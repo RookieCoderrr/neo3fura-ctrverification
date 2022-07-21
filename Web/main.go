@@ -426,7 +426,6 @@ func execCommand(pathFile string, folderName string, w http.ResponseWriter, m ma
 	} else {
 		fmt.Println(string(opBytes))
 	}
-i
 	//
 	version:="neo3-boa 0.8.1"
 	version =strings.Trim(version," ")
