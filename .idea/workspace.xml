@@ -4,11 +4,7 @@
     <option name="autoReloadType" value="ALL" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="c1f00966-36fe-4210-afa6-c40dc9460b27" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Web/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/Web/main.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Web/pythonExec.sh" beforeDir="false" afterPath="$PROJECT_DIR$/Web/pythonExec.sh" afterDir="false" />
-    </list>
+    <list default="true" id="c1f00966-36fe-4210-afa6-c40dc9460b27" name="Changes" comment="" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -98,7 +94,8 @@
     <MESSAGE value="update5 pythonCompiler" />
     <MESSAGE value="update6 pythonCompiler" />
     <MESSAGE value="update7 pythonCompiler" />
-    <option name="LAST_COMMIT_MESSAGE" value="update7 pythonCompiler" />
+    <MESSAGE value="update8 pythonCompiler" />
+    <option name="LAST_COMMIT_MESSAGE" value="update8 pythonCompiler" />
   </component>
   <component name="VgoProject">
     <integration-enabled>true</integration-enabled>
