@@ -398,11 +398,8 @@ func execCommand(pathFile string, folderName string, w http.ResponseWriter, m ma
 	}
 
 	if getVersion(m) != "neow3j" {
- 
 		cmd.Dir = pathFile + "/"
- 
-	}
-	if getVersion(m) == "neow3j" {
+	}else{
 		cmd.Dir = "./"
 	}
 
@@ -429,7 +426,13 @@ func execCommand(pathFile string, folderName string, w http.ResponseWriter, m ma
 	} else {
 		fmt.Println(string(opBytes))
 	}
-	if getVersion(m) == "neo3-boa" {
+
+	//
+	version:=getVersion(m)
+	version =strings.Trim(version," ")
+	str:=strings.Split(version," ")
+
+	if str[0] == "neo3-boa" {
 		_, err = os.Lstat(pathFile + "/" + m["Filename"] + ".nef")
 		fmt.Println("check python nef")
 	} else if getVersion(m) == "neo-go" {
@@ -499,7 +502,7 @@ func execCommand(pathFile string, folderName string, w http.ResponseWriter, m ma
 
 	} else {
 		fmt.Println("============.nef file doesn't exist===========", err)
-		msg, _ := json.Marshal(jsonResult{2, ".nef file doesm't exist "})
+		msg, _ := json.Marshal(jsonResult{2, ".nef file doesn't exist "})
 		w.Header().Set("Content-Type", "application/json")
 		w.Write(msg)
 
