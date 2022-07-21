@@ -290,7 +290,7 @@ func execCommand(pathFile string, folderName string, w http.ResponseWriter, m ma
 	//根据用户上传参数选择对应的编译器
 	cmd := exec.Command("echo")
 	if getVersion(m) == "neo3-boa 0.11.3" {
-		cmd = exec.Command("/bin/sh", "-c", "/go/application/pythonExec.sh","\"boa113\"")
+		cmd = exec.Command("/bin/sh", "-c", "/go/application/pythonExec.sh \"boa113\"")
 		fmt.Println("Compiler: neo3-boa, Command: neo3-boa 0.11.3")
 	}else if getVersion(m) == "neo3-boa 0.11.2" {
 		cmd = exec.Command("/bin/sh", "-c", "/go/application/pythonExec.sh","\"boa112\"")
