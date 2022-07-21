@@ -427,7 +427,7 @@ func execCommand(pathFile string, folderName string, w http.ResponseWriter, m ma
 		fmt.Println(string(opBytes))
 	}
 	//
-	version:="neo3-boa 0.8.1"
+	version:=getVersion(m)
 	version =strings.Trim(version," ")
 	str:=strings.Split(version," ")
 	fmt.Println(str[0],version)
@@ -453,7 +453,7 @@ func execCommand(pathFile string, folderName string, w http.ResponseWriter, m ma
 	}
 	if !os.IsNotExist(err) {
 		var res nef.File
-		if getVersion(m) == "neo3-boa" {
+		if str[0] == "neo3-boa" {
 			f, err := ioutil.ReadFile(pathFile + "/" + m["Filename"] + ".nef")
 			if err != nil {
 				log.Fatal(err)
