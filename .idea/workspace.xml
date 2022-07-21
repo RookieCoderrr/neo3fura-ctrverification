@@ -7,6 +7,7 @@
     <list default="true" id="c1f00966-36fe-4210-afa6-c40dc9460b27" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Web/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/Web/main.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Web/pythonExec.sh" beforeDir="false" afterPath="$PROJECT_DIR$/Web/pythonExec.sh" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -50,7 +51,7 @@
     <property name="go.modules.go.list.on.any.changes.was.set" value="true" />
     <property name="go.sdk.automatically.set" value="true" />
     <property name="go.tried.to.enable.integration.vgo.integrator" value="true" />
-    <property name="last_opened_file_path" value="$USER_HOME$" />
+    <property name="last_opened_file_path" value="$USER_HOME$/GolandProjects/awesomeProject" />
     <property name="node.js.detected.package.eslint" value="true" />
     <property name="node.js.detected.package.tslint" value="true" />
     <property name="node.js.selected.package.eslint" value="(autodetect)" />

@@ -290,49 +290,49 @@ func execCommand(pathFile string, folderName string, w http.ResponseWriter, m ma
 	//根据用户上传参数选择对应的编译器
 	cmd := exec.Command("echo")
 	if getVersion(m) == "neo3-boa 0.11.3" {
-		cmd = exec.Command("/bin/sh", "-c", "/go/application/pythonExec.sh \"boa113\"")
+		cmd = exec.Command("/bin/sh","/go/application/pythonExec.sh","boa113")
 		fmt.Println("Compiler: neo3-boa, Command: neo3-boa 0.11.3")
 	}else if getVersion(m) == "neo3-boa 0.11.2" {
-		cmd = exec.Command("/bin/sh", "-c", "/go/application/pythonExec.sh","\"boa112\"")
+		cmd = exec.Command("/bin/sh","/go/application/pythonExec.sh","boa112")
 		fmt.Println("Compiler: neo3-boa, Command: neo3-boa 0.11.2")
 	}else if getVersion(m) == "neo3-boa 0.11.1" {
-		cmd = exec.Command("/bin/sh", "-c", "/go/application/pythonExec.sh","\"boa111\"")
+		cmd = exec.Command("/bin/sh","/go/application/pythonExec.sh","boa111")
 		fmt.Println("Compiler: neo3-boa, Command: neo3-boa 0.11.1")
 	}else if getVersion(m) == "neo3-boa 0.11.0" {
-		cmd = exec.Command("/bin/sh", "-c", "/go/application/pythonExec.sh","\"boa110\"")
+		cmd = exec.Command("/bin/sh","/go/application/pythonExec.sh","boa110")
 		fmt.Println("Compiler: neo3-boa, Command: neo3-boa 0.11.0")
 	}else if getVersion(m) == "neo3-boa 0.10.1" {
-		cmd = exec.Command("/bin/sh", "-c", "/go/application/pythonExec.sh","\"boa101\"")
+		cmd = exec.Command("/bin/sh","/go/application/pythonExec.sh","boa101")
 		fmt.Println("Compiler: neo3-boa, Command: neo3-boa 0.10.1")
 	}else if getVersion(m) == "neo3-boa 0.10.0" {
-		cmd = exec.Command("/bin/sh", "-c", "/go/application/pythonExec.sh","\"boa100\"")
+		cmd = exec.Command("/bin/sh","/go/application/pythonExec.sh","boa100")
 		fmt.Println("Compiler: neo3-boa, Command: neo3-boa 0.10.0")
 	}else if getVersion(m) == "neo3-boa 0.9.0" {
-		cmd = exec.Command("/bin/sh", "-c", "/go/application/pythonExec.sh","\"boa090\"")
+		cmd = exec.Command("/bin/sh","/go/application/pythonExec.sh","boa090")
 		fmt.Println("Compiler: neo3-boa, Command: neo3-boa 0.9.0")
 	}else if getVersion(m) == "neo3-boa 0.8.3" {
-		cmd = exec.Command("/bin/sh", "-c", "/go/application/pythonExec.sh","\"boa083\"")
+		cmd = exec.Command("/bin/sh",  "/go/application/pythonExec.sh","boa083")
 		fmt.Println("Compiler: neo3-boa, Command: neo3-boa 0.8.3")
 	}else if getVersion(m) == "neo3-boa 0.8.2" {
-		cmd = exec.Command("/bin/sh", "-c", "/go/application/pythonExec.sh","\"boa082\"")
+		cmd = exec.Command("/bin/sh","/go/application/pythonExec.sh","boa082")
 		fmt.Println("Compiler: neo3-boa, Command: neo3-boa 0.8.2")
 	}else if getVersion(m) == "neo3-boa 0.8.1" {
-		cmd = exec.Command("/bin/sh", "-c", "/go/application/pythonExec.sh","\"boa081\"")
+		cmd = exec.Command("/bin/sh","/go/application/pythonExec.sh","boa081")
 		fmt.Println("Compiler: neo3-boa, Command: neo3-boa 0.8.1")
 	}else if getVersion(m) == "neo3-boa 0.8.0" {
-		cmd = exec.Command("/bin/sh", "-c", "/go/application/pythonExec.sh","\"boa080\"")
+		cmd = exec.Command("/bin/sh","/go/application/pythonExec.sh","boa080")
 		fmt.Println("Compiler: neo3-boa, Command: neo3-boa 0.8.0")
 	}else if getVersion(m) == "neo3-boa 0.7.0" {
-		cmd = exec.Command("/bin/sh", "-c", "/go/application/pythonExec.sh","\"boa070\"")
+		cmd = exec.Command("/bin/sh","/go/application/pythonExec.sh","boa070")
 		fmt.Println("Compiler: neo3-boa, Command: neo3-boa 0.7.0")
 	}else if getVersion(m) == "neo3-boa 0.3.0" {
-		cmd = exec.Command("/bin/sh", "-c", "/go/application/pythonExec.sh","\"boa030\"")
+		cmd = exec.Command("/bin/sh","/go/application/pythonExec.sh","boa030")
 		fmt.Println("Compiler: neo3-boa, Command: neo3-boa 0.3.0")
 	}else if getVersion(m) == "neo3-boa 0.0.3" {
-		cmd = exec.Command("/bin/sh", "-c", "/go/application/pythonExec.sh","\"boa003\"")
+		cmd = exec.Command("/bin/sh","/go/application/pythonExec.sh","boa003")
 		fmt.Println("Compiler: neo3-boa, Command: neo3-boa 0.0.3")
 	}else if getVersion(m) == "neo3-boa 0.0.0" {
-		cmd = exec.Command("/bin/sh", "-c", "/go/application/pythonExec.sh","\"boa000\"")
+		cmd = exec.Command("/bin/sh","/go/application/pythonExec.sh","boa000")
 		fmt.Println("Compiler: neo3-boa, Command: neo3-boa 0.0.0")
 	}else if getVersion(m) == "neow3j" {
 		command := "/go/application/javaExec.sh " + getJavaPackage(m) + " " + folderName
@@ -426,7 +426,7 @@ func execCommand(pathFile string, folderName string, w http.ResponseWriter, m ma
 	} else {
 		fmt.Println(string(opBytes))
 	}
-
+i
 	//
 	version:="neo3-boa 0.8.1"
 	version =strings.Trim(version," ")
