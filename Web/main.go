@@ -431,7 +431,7 @@ func execCommand(pathFile string, folderName string, w http.ResponseWriter, m ma
 	version:=getVersion(m)
 	version =strings.Trim(version," ")
 	str:=strings.Split(version," ")
-
+	fmt.Println(str)
 	if str[0] == "neo3-boa" {
 		_, err = os.Lstat(pathFile + "/" + m["Filename"] + ".nef")
 		fmt.Println("check python nef")
