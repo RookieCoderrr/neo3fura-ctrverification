@@ -449,26 +449,47 @@ func execCommand(pathFile string, folderName string, w http.ResponseWriter, m ma
 		fmt.Println("find java nef file")
 	} else {
 		//获取当前nef 文件的名称         合约displayname
-		file,f:= GetNameBySuffix(pathFile + "/" + "bin/sc/",".nef")
+		file,_:= GetNameBySuffix(pathFile + "/" + "bin/sc/",".nef")
 		//_, err = os.Lstat(pathFile + "/" + "bin/sc/" + m["Filename"] + ".nef")
-		if f{
-			_, err = os.Lstat(pathFile + "/" + "bin/sc/" + file + ".nef")
-		}
+
+		_, err = os.Lstat(pathFile + "/" + "bin/sc/" + file + ".nef")
+
 		fmt.Println("there")
 	}
 	fmt.Println(err)
 	if !os.IsNotExist(err) {
 		var res nef.File
 
-		f, err1 := ioutil.ReadFile(err)
-		if err1 != nil {
-			log.Fatal(err1)
+		if str[0] == "neo3-boa" {
+			f, err := ioutil.ReadFile(pathFile + "/" + m["Filename"] + ".nef")
+			if err != nil {
+				log.Fatal(err)
+			}
+			res, err = nef.FileFromBytes(f)
+			if err != nil {
+				log.Fatal("error")
+			}
+		} else if getVersion(m) == "neow3j"{
+			f, err:= ioutil.ReadFile("./javacontractgradle/build/neow3j/"+m["Filename"])
+			if err != nil {
+				log.Fatal("error")
+			}
+			res, err = nef.FileFromBytes(f)
+			if err != nil {
+				log.Fatal("error")
+			}
+		} else {
+			file,_:= GetNameBySuffix(pathFile + "/" + "bin/sc/",".nef")
+
+			f, err := ioutil.ReadFile(pathFile + "/" + "bin/sc/" + file + ".nef")
+			if err != nil {
+				log.Fatal(err)
+			}
+			res, err = nef.FileFromBytes(f)
+			if err != nil {
+				log.Fatal("error")
+			}
 		}
-		res, err1 = nef.FileFromBytes(f)
-		if err1 != nil {
-			log.Fatal("error")
-		}
-		
 
 		//fmt.Println(res.Script)
 		var result = base64.StdEncoding.EncodeToString(res.Script)

@@ -4,8 +4,9 @@
     <option name="autoReloadType" value="ALL" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="c1f00966-36fe-4210-afa6-c40dc9460b27" name="Changes" comment="update10 pythonCompiler">
+    <list default="true" id="c1f00966-36fe-4210-afa6-c40dc9460b27" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Web/Dockerfile" beforeDir="false" afterPath="$PROJECT_DIR$/Web/Dockerfile" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Web/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/Web/main.go" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -100,7 +101,8 @@
     <MESSAGE value="update8 pythonCompiler" />
     <MESSAGE value="update9 pythonCompiler" />
     <MESSAGE value="update10 pythonCompiler" />
-    <option name="LAST_COMMIT_MESSAGE" value="update10 pythonCompiler" />
+    <MESSAGE value="fix displayname" />
+    <option name="LAST_COMMIT_MESSAGE" value="fix displayname" />
   </component>
   <component name="VgoProject">
     <integration-enabled>true</integration-enabled>
