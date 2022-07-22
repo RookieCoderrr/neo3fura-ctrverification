@@ -443,54 +443,32 @@ func execCommand(pathFile string, folderName string, w http.ResponseWriter, m ma
 			if path.Ext("./"+f.Name()) == ".nef" {
 				m["Filename"] = f.Name()
 				break
-			}
+			}    
 		}
 		_, err = os.Lstat("./javacontractgradle/build/neow3j/" + m["Filename"])
 		fmt.Println("find java nef file")
 	} else {
-		_, err = os.Lstat(pathFile + "/" + "bin/sc/" + m["Filename"] + ".nef")
+		//获取当前nef 文件的名称         合约displayname
+		file,f:= GetNameBySuffix(pathFile + "/" + "bin/sc/",".nef")
+		//_, err = os.Lstat(pathFile + "/" + "bin/sc/" + m["Filename"] + ".nef")
+		if f{
+			_, err = os.Lstat(pathFile + "/" + "bin/sc/" + file + ".nef")
+		}
 		fmt.Println("there")
 	}
+	fmt.Println(err)
 	if !os.IsNotExist(err) {
 		var res nef.File
-		if str[0] == "neo3-boa" {
-			f, err := ioutil.ReadFile(pathFile + "/" + m["Filename"] + ".nef")
-			if err != nil {
-				log.Fatal(err)
-			}
-			res, err = nef.FileFromBytes(f)
-			if err != nil {
-				log.Fatal("error")
-			}
-		} else if getVersion(m) == "neo-go" {
-			f, err := ioutil.ReadFile(pathFile + "/" + "out.nef")
-			if err != nil {
-				log.Fatal(err)
-			}
-			res, err = nef.FileFromBytes(f)
-			if err != nil {
-				log.Fatal("error")
-			}
-		} else if getVersion(m) == "neow3j" {
-			f, err := ioutil.ReadFile("./javacontractgradle/build/neow3j/" + m["Filename"])
-			if err != nil {
-				log.Fatal("error")
-			}
-			res, err = nef.FileFromBytes(f)
-			if err != nil {
-				log.Fatal("error")
-			}
 
-		} else {
-			f, err := ioutil.ReadFile(pathFile + "/" + "bin/sc/" + m["Filename"] + ".nef")
-			if err != nil {
-				log.Fatal(err)
-			}
-			res, err = nef.FileFromBytes(f)
-			if err != nil {
-				log.Fatal("error")
-			}
+		f, err1 := ioutil.ReadFile(err)
+		if err1 != nil {
+			log.Fatal(err1)
 		}
+		res, err1 = nef.FileFromBytes(f)
+		if err1 != nil {
+			log.Fatal("error")
+		}
+		
 
 		//fmt.Println(res.Script)
 		var result = base64.StdEncoding.EncodeToString(res.Script)
@@ -500,6 +478,7 @@ func execCommand(pathFile string, folderName string, w http.ResponseWriter, m ma
 		return result
 
 	} else {
+
 		fmt.Println("============.nef file doesn't exist===========", err)
 		msg, _ := json.Marshal(jsonResult{2, ".nef file doesn't exist "})
 		w.Header().Set("Content-Type", "application/json")
@@ -643,6 +622,22 @@ func intializeMongoOnlineClient(cfg Config, ctx context.Context) (*mongo.Client,
 	return co, dbOnline
 }
 
+//获取目录下以××后缀的文件名（单个文件）
+func GetNameBySuffix(path string,suffix string) (string ,bool){
+	fileList,_:=ioutil.ReadDir(path)
+
+	for _,it:=range fileList {
+		name := it.Name()
+		compileRegex := regexp.MustCompile(suffix+"$")
+		isExit := compileRegex.MatchString(name)
+		if isExit {
+			file := strings.TrimSuffix(name, suffix) // 输出 name
+			return file,true
+		}
+	}
+
+	return "", false
+}
 func getContract(m map[string]string) string {
 	return m["Contract"]
 }
