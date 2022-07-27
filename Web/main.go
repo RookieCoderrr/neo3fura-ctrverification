@@ -433,7 +433,8 @@ func execCommand(pathFile string, folderName string, w http.ResponseWriter, m ma
 	str:=strings.Split(version," ")
 	fmt.Println(str[0],version)
 	if str[0] == "neo3-boa" {
-		_, err = os.Lstat(pathFile + "/" + m["Filename"] + ".nef")
+		file,_:= GetNameBySuffix(pathFile + "/" ,".nef")
+		_, err = os.Lstat(pathFile + "/" + file + ".nef")
 		fmt.Println("check python nef")
 	} else if getVersion(m) == "neo-go" {
 		_, err = os.Lstat(pathFile + "/" + "out.nef")
@@ -462,7 +463,8 @@ func execCommand(pathFile string, folderName string, w http.ResponseWriter, m ma
 		var res nef.File
 
 		if str[0] == "neo3-boa" {
-			f, err := ioutil.ReadFile(pathFile + "/" + m["Filename"] + ".nef")
+			file,_:= GetNameBySuffix(pathFile + "/" ,".nef")
+			f, err := ioutil.ReadFile(pathFile + "/" + file + ".nef")
 			if err != nil {
 				log.Fatal(err)
 			}
