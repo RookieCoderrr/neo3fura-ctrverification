@@ -33,6 +33,13 @@ RUN  apt-get install -y  python3
 
 RUN apt-get install -y python3-venv
 
+##neo3-boa 0.11.4
+RUN python3 -m venv venv114
+RUN echo "dash dash/sh boolean false" | debconf-set-selections
+RUN DEBIAN_FRONTEND=noninteractive dpkg-reconfigure dash
+RUN /bin/sh -c 'source venv114/bin/activate && pip install neo3-boa==0.11.4'
+#RUN /bin/sh -c 'source venv114/bin/deactivate'
+
 ##neo3-boa 0.11.3
 RUN python3 -m venv venv113
 RUN echo "dash dash/sh boolean false" | debconf-set-selections
