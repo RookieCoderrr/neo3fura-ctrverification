@@ -139,9 +139,11 @@ RUN apt install -y default-jdk
 
 RUN tar -zxvf compiler2.tar.gz
 
-RUN  chmod 777 compiler2/d/net6.0/nccs.exe
+RUN  chmod 777 compiler2/3.1/net6.0/nccs.exe
 
-RUN  chmod 777 compiler2/e/net6.0/nccs.exe
+RUN  chmod 777 compiler2/3.3/net6.0/nccs.exe
+
+RUN  chmod 777 compiler2/3.4/net6.0/nccs.exe
 
 RUN tar -zxvf contract.tar.gz
 
